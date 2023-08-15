@@ -20,12 +20,12 @@ export default function App() {
         
         {/* List of pages */}
         <div className="pl-4 text-xl">
-            <div><Link className={link_style} href="./">Shop Display</Link></div>
+            <div><Link className={link_style} href="//shop.origingolf.com">Shop Display</Link></div>
             <div className="ml-6">
                 {[
-                    {text: "Edit Shop", link: "./edit"},
-                    {text: "History Log", link: "./history"},
-                    {text: "Moment History", link: "./moment"},
+                    {text: "Edit Shop", link: "//shop.origingolf.com/edit"},
+                    {text: "History Log", link: "//shop.origingolf.com/history"},
+                    {text: "Moment History", link: "//shop.origingolf.com/moment"},
                 ].map((obj) =>
                     {
                         return <div key={obj.text}>

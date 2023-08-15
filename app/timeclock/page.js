@@ -193,7 +193,12 @@ export default function App() {
 
         // JSX (RETURN VALUE)
 
-    return (
+    return (<>
+
+        <a href="./" class="block ml-3 mt-3 text-lg border border-black w-fit px-2 cursor-pointer hover:bg-gray-100 transition-colors text-center rounded-md">
+            Back to Admin
+        </a>
+
         <div class="flex mb-32">
 
             {/* DATA INPUT */}
@@ -229,7 +234,7 @@ export default function App() {
                                 return <option value={employee.id} key={employee.id}>{employee.name}</option>
                             })}
                         </select>
-                        <button class="border border-gray-700 rounded block p-2 mr-2" onClick={ () => {
+                        <button class="border border-gray-700 rounded block p-2 mr-2 hover:bg-gray-100 transition-colors " onClick={ () => {
                             let next_employee = employees.find((e) => e.id > selected );
                             if (next_employee == undefined) setSelected(0);
                             else setSelected(next_employee.id);
@@ -252,7 +257,7 @@ export default function App() {
             </div>
 
         </div>
-    );
+    </>);
 }
 
 function Overview ( { employees, data, start, end } ) {
@@ -327,7 +332,7 @@ function EmployeeData ( {employee, data, deleteTime, addTime, setBreak, start, e
                 <h2 class="font-sans text-lg mb-3 font-semibold">Timeclock</h2>
                 <div>{timeclockRows}</div>
                 <input class="border rounded border-gray-700 mr-2 p-2" type="datetime-local" onChange={(e) => setDatetime(e.target.value)} />
-                <button class="border rounded border-gray-700 p-2" onClick={(e) => addTime(employee.id, datetime)}>Add</button>
+                <button class="border rounded border-gray-700 p-2 hover:bg-gray-100 transition-colors " onClick={(e) => addTime(employee.id, datetime)}>Add</button>
             </div>
             <div>
                 <h2 class="font-sans text-lg font-semibold">Hours</h2>
