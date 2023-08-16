@@ -240,7 +240,7 @@ export default function App() {
                             else setSelected(next_employee.id);
                         } }> Next </button>
                     </div>
-                 </div>
+                </div>
             </div>
 
             {/* EMPLOYEE DATA */}
@@ -459,6 +459,40 @@ function findHours( { data } ) {
 
 }
 
+function findHoursRange( { data, start, end } ) {
+
+    let total_hours = 0;
+
+    data = data.filter((datum) => {
+        console.log(moment(datum.timestamp).format('MM/DD/YYYY hh:mm:ss a'));
+        return (moment(datum.date + ' ' + datum.time).isBetween(moment(start), moment(end)));
+    })
+
+    for (let i = 0; i < data.length - 1; i += 2) {
+
+        let first = data[i];
+        let second = data[i + 1];
+
+        let start_time = new Date(first.date + ' ' + first.time);
+        let end_time = new Date(second.date + ' ' + second.time);
+
+        let length = (end_time - start_time) / (1000 * 60 * 60);
+
+        if (second.hasBreak) length -= 0.5;
+
+        total_hours += length;
+
+    }
+
+    let hours = Math.floor(total_hours);
+    let minutes = Math.floor(60 * (total_hours % 1));
+
+    let output = `${hours} ${hours != 1 ? "hours" : "hour"}, ${minutes} ${minutes != 1 ? "minutes" : "minute"}`
+
+    return output;
+
+}
+
 function generateGraphic( { data, start, end } ) {
 
     let graphic = [];
@@ -518,7 +552,12 @@ function generateGraphic( { data, start, end } ) {
         output += '|';
         for (let z = 0; z < 24; z++) output += graphic[(i * 24) + z];
         output += '|\n';
-        if (i % 7 == 6) output += '\n';
+        if (i % 7 == 6) {
+            let week_start = moment(start).add(i, 'day').add(-6, 'day').format('MM/DD/YYYY [12:00 AM]');
+            let week_end = moment(start).add(i, 'day').format('MM/DD/YYYY [11:59 PM]');
+            output += findHoursRange({data, start: week_start, end: week_end}) + '\n';
+            output += '\n';
+        }
     }
 
     return output;
