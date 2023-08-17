@@ -10,7 +10,7 @@ import Link from 'next/link';
  */
 export default function App() {
 
-    let link_style = "text-red-700 hover:text-purple-900 transition-colors block";
+    let link_style = "text-red-700 hover:text-purple-900 transition-colors block w-fit";
 
         // JSX (RETURN VALUE)
 
