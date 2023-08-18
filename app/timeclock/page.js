@@ -207,7 +207,7 @@ export default function App() {
         <div className="flex w-fit m-auto">
 
             {/* DATA INPUT */}
-            <div className="p-6 m-3 h-fit w-13 border-t-red-vivid-600 border-t-8 rounded bg-cool-grey-50">
+            <div className="p-6 m-3 h-fit w-13 border-t-red-vivid-600 border-t-8 rounded bg-cool-grey-50 shadow-lg">
 
                 <h2 className="font-sans text-lg mb-5 text-cool-grey-600">Data Input</h2>
                 
@@ -268,7 +268,7 @@ export default function App() {
             </div>
 
             {/* EMPLOYEE DATA */}
-            <div className="p-6 m-3 w-16 border-t-red-vivid-600 border-t-8 rounded bg-cool-grey-50">
+            <div className="p-6 m-3 w-16 border-t-red-vivid-600 border-t-8 rounded bg-cool-grey-50 shadow-lg">
                 {employees.find((employee) => employee.id == selected ) != undefined && 
                 <EmployeeData   employee={employees.find((employee) => employee.id == selected )} 
                                 data={changedClock.filter((entry) => selected == entry.id )} 
