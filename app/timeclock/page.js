@@ -201,7 +201,7 @@ export default function App() {
 
         {/* HEADER */}
         <div className="m-auto">
-            <h1 className="mt-3 text-xl text-center text-red-vivid-900">Timeclock Tool</h1>
+            <h1 className="mt-3 text-xl text-center text-cool-grey-900">Timeclock Tool</h1>
         </div>
 
         <div className="flex w-fit m-auto">
