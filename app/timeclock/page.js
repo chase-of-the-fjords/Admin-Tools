@@ -195,46 +195,70 @@ export default function App() {
 
     return (<>
 
-        <a href="./" class="block ml-3 mt-3 text-lg border border-black w-fit px-2 cursor-pointer hover:bg-gray-100 transition-colors text-center rounded-md">
+        {/* <a href="./" className="block bg-cool-grey-50 ml-3 mt-3 text-lg border border-black w-fit px-2 cursor-pointer hover:bg-gray-100 transition-colors text-center rounded-md">
             Back to Admin
-        </a>
+        </a> */}
 
-        <div class="flex mb-32">
+        {/* HEADER */}
+        <div className="m-auto">
+            <h1 className="mt-3 text-xl text-center text-red-vivid-900">Timeclock Tool</h1>
+        </div>
+
+        <div className="flex w-fit m-auto">
 
             {/* DATA INPUT */}
-            <div class="p-6 m-3 border border-gray-800 rounded-md w-80">
-                <h2 class="font-sans text-2xl mb-3 font-bold">Input Data</h2>
+            <div className="p-6 m-3 h-fit w-13 border-t-red-vivid-600 border-t-8 rounded bg-cool-grey-50">
+
+                <h2 className="font-sans text-lg mb-5 text-cool-grey-600">Data Input</h2>
                 
-                <div class="mb-3">
-                    <h3 class="font-sans text-lg font-semibold">Employee Data</h3>
-                    <input type="file" accept=".dat, .txt" onInput={e => { getEmployeeData(e) }} onClick={ (e) => e.target.value = null } />
+                <div className="mb-5">
+                <label className="font-sans text-cool-grey-900 text-xl font-semibold" htmlFor="employee_data">Employee Data</label>
+                    <input id="employee_data" 
+                            className="block w-11 mt-1 text-cool-grey-500 text-sm
+                                       file:block file:w-9 file:p-2 file:mb-1
+                                       file:text-cool-grey-700 
+                                       file:border-0 file:border-cool-grey-500 file:border-solid file:rounded-md 
+                                       file:bg-cool-grey-100 hover:file:bg-cool-grey-200 file:transition-colors
+                                       file:cursor-pointer" 
+                            type="file" multiple={false} accept=".dat, .txt" onInput={e => { getEmployeeData(e) }} 
+                            onClick={ (e) => e.target.value = null } />
                 </div>
 
-                <div class="mb-3">
-                    <h3 class="font-sans text-lg font-semibold">Timeclock Data</h3>
-                    <input type="file" multiple={true} accept=".dat, .txt" onInput={e => { getTimeclockData(e) }} onClick={ (e) => e.target.value = null } />
+                <div className="mb-5">
+                    <label className="font-sans text-cool-grey-900 text-xl font-semibold" htmlFor="timeclock_data">Timeclock Data</label>
+                    <input id="timeclock_data" 
+                            className="block w-11 mt-1 text-cool-grey-500 text-sm
+                                        file:block file:w-9 file:p-2 file:mb-1
+                                        file:text-cool-grey-700 
+                                        file:border-0 file:border-cool-grey-500 file:border-solid file:rounded-md 
+                                        file:bg-cool-grey-100 hover:file:bg-cool-grey-200 file:transition-colors
+                                        file:cursor-pointer" 
+                            type="file" multiple={true} accept=".dat, .txt" onInput={e => { getTimeclockData(e) }} 
+                            onClick={ (e) => e.target.value = null } />
                 </div>
 
-                <div class="mb-3">
-                    <h3 class="font-sans text-lg font-semibold">Starting Date</h3>
-                    <input class="border rounded border-gray-700 p-2" type="date" defaultValue={(moment().startOf('week').add(-2, 'week')).format('YYYY-MM-DD')} onChange={e => { setStart(e.target.value) }} />
+                <div className="mb-5">
+                <label className="font-sans text-cool-grey-600 text-md" htmlFor="start_date"><span className="text-xl text-cool-grey-900 font-semibold">Start Date</span> for Pay Period</label>
+                    <input id="start_date" type="date" defaultValue={(moment().startOf('week').add(-2, 'week')).format('YYYY-MM-DD')} onChange={e => { setStart(e.target.value) }} 
+                            className="w-10 p-2 text-md text-cool-grey-900 bg-cool-grey-100 focus:outline-cool-grey-500 rounded" />
                 </div>
 
-                <div class="mb-3">
-                    <h3 class="font-sans text-lg font-semibold">Ending Date</h3>
-                    <input class="border rounded border-gray-700 p-2" type="date" defaultValue={(moment().startOf('week').add(-1, 'day')).format('YYYY-MM-DD')} onChange={e => { setEnd(e.target.value) }} />
+                <div className="mb-5">
+                    <label className="font-sans text-cool-grey-600 text-md" htmlFor="end_date"><span className="text-xl text-cool-grey-900 font-semibold">End Date</span> for Pay Period</label>
+                    <input id="end_date" type="date" defaultValue={(moment().startOf('week').add(-1, 'day')).format('YYYY-MM-DD')} onChange={e => { setEnd(e.target.value) }} 
+                            className="w-10 p-2 text-md text-cool-grey-900 bg-cool-grey-100 focus:outline-cool-grey-500 rounded" />
                 </div>
 
-                <div class="mb-3">
-                    <h3 class="font-sans text-lg font-semibold">Employees</h3>
-                    <div class="flex">
-                        <select class="border border-gray-700 rounded block p-2 mr-2" name="employee" id="employee" value={selected} onChange={e => { setSelected(e.target.value) }}>
+                <div className="mb-3">
+                    <h3 className="font-sans text-xl font-semibold">Select Employee</h3>
+                    <div className="flex">
+                        <select className="w-11 p-2 mr-2 text-md text-cool-grey-900 bg-cool-grey-100 focus:outline-cool-grey-500 rounded" name="employee" id="employee" value={selected} onChange={e => { setSelected(e.target.value) }}>
                             <option value={0} key={0}>Overview</option>
                             {employees.map((employee) => {
                                 return <option value={employee.id} key={employee.id}>{employee.name}</option>
                             })}
                         </select>
-                        <button class="border border-gray-700 rounded block p-2 mr-2 hover:bg-gray-100 transition-colors " onClick={ () => {
+                        <button className="block text-md w-7 p-1 mr-2 text-cool-grey-900 rounded hover:bg-cool-grey-100 focus:outline-cool-grey-500 transition-colors" onClick={ () => {
                             let next_employee = employees.find((e) => e.id > selected );
                             if (next_employee == undefined) setSelected(0);
                             else setSelected(next_employee.id);
@@ -244,7 +268,7 @@ export default function App() {
             </div>
 
             {/* EMPLOYEE DATA */}
-            <div class="m-3 p-6 border border-gray-800 rounded-md flex-1">
+            <div className="p-6 m-3 w-16 border-t-red-vivid-600 border-t-8 rounded bg-cool-grey-50">
                 {employees.find((employee) => employee.id == selected ) != undefined && 
                 <EmployeeData   employee={employees.find((employee) => employee.id == selected )} 
                                 data={changedClock.filter((entry) => selected == entry.id )} 
@@ -263,7 +287,7 @@ export default function App() {
 function Overview ( { employees, data, start, end } ) {
 
     return <>
-        <h2 class="font-sans text-2xl mb-3 font-semibold">Employees</h2>
+        <h2 className="font-sans text-2xl mb-3 font-semibold">Employees</h2>
         {
             employees.map((employee) => {
                 return <li key={employee.id}>
@@ -294,7 +318,7 @@ function EmployeeData ( {employee, data, deleteTime, addTime, setBreak, start, e
         let clockin = data[i];
 
         timeclockRows.push(<li 
-                    class={`${ "cursor-pointer mb-0.5" }
+                    className={`${ "cursor-pointer mb-0.5" }
                             ${ clockin.deleted && "line-through"}
                             ${ clockin.created && "font-bold"} `}
                     key={clockin.unique}
@@ -315,8 +339,8 @@ function EmployeeData ( {employee, data, deleteTime, addTime, setBreak, start, e
                 let hours = Math.floor(length);
                 let minutes = Math.floor(60 * (length % 1));
 
-                timeclockRows.push(<div class="mb-6" key={clockin.unique + ' shift'}>
-                    <p class="font-semibold">Total: {`${hours} ${hours != 1 ? "hours" : "hour"}, ${minutes} ${minutes != 1 ? "minutes" : "minute"}`}</p>
+                timeclockRows.push(<div className="mb-6" key={clockin.unique + ' shift'}>
+                    <p className="font-semibold">Total: {`${hours} ${hours != 1 ? "hours" : "hour"}, ${minutes} ${minutes != 1 ? "minutes" : "minute"}`}</p>
                     <input type='checkbox' checked={clockin.hasBreak} onChange={(e) => setBreak(clockin.unique, e.target.checked)}/> Subtract Break
                 </div>)
             }
@@ -325,20 +349,20 @@ function EmployeeData ( {employee, data, deleteTime, addTime, setBreak, start, e
     }
 
     return <>
-        <h2 class="font-sans text-2xl mb-3 font-bold">{employee.name} (ID {employee.id}, Shift {employee.shift})</h2>
+        <h2 className="font-sans text-2xl mb-3 font-bold">{employee.name} (ID {employee.id}, Shift {employee.shift})</h2>
         
-        <div class="flex">
-            <div class="w-96">
-                <h2 class="font-sans text-lg mb-3 font-semibold">Timeclock</h2>
+        <div className="flex">
+            <div className="w-96">
+                <h2 className="font-sans text-lg mb-3 font-semibold">Timeclock</h2>
                 <div>{timeclockRows}</div>
-                <input class="border rounded border-gray-700 mr-2 p-2" type="datetime-local" onChange={(e) => setDatetime(e.target.value)} />
-                <button class="border rounded border-gray-700 p-2 hover:bg-gray-100 transition-colors " onClick={(e) => addTime(employee.id, datetime)}>Add</button>
+                <input className="border rounded border-gray-700 mr-2 p-2" type="datetime-local" onChange={(e) => setDatetime(e.target.value)} />
+                <button className="border rounded border-gray-700 p-2 hover:bg-gray-100 transition-colors " onClick={(e) => addTime(employee.id, datetime)}>Add</button>
             </div>
             <div>
-                <h2 class="font-sans text-lg font-semibold">Hours</h2>
+                <h2 className="font-sans text-lg font-semibold">Hours</h2>
                 <b>Total:</b> {findHours({data: data.filter((entry) => !entry.deleted)})}
-                <h2 class="font-sans text-lg mt-3 font-semibold">Display</h2>
-                <p class="font-mono whitespace-pre">{generateGraphic({data: data.filter((entry) => !entry.deleted), start, end})}</p>
+                <h2 className="font-sans text-lg mt-3 font-semibold">Display</h2>
+                <p className="font-mono whitespace-pre">{generateGraphic({data: data.filter((entry) => !entry.deleted), start, end})}</p>
             </div>
         </div>
     </>
