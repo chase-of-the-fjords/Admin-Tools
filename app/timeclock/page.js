@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 
 import moment, { duration } from "moment";
 
-let countdown = -1;
+import Link from "next/link";
 
 /**
  * The default export for the view page.
@@ -13,6 +13,8 @@ let countdown = -1;
  * @returns JSX representation of the edit page.
  */
 export default function App() {
+
+    let [countdown, setCountdown] = useState(-1);
 
     let [employeeData, setEmployeeData] = useState("");
     let [timeclockData, setTimeclockData] = useState("");
@@ -185,7 +187,7 @@ export default function App() {
 
             setChanges(newChanges);
 
-            countdown--;
+            setCountdown(countdown - 2);
 
         }
 
@@ -200,16 +202,17 @@ export default function App() {
         </a> */}
 
         {/* HEADER */}
-        <div className="m-auto">
-            <h1 className="mt-3 text-xl text-center text-cool-grey-900">Timeclock Tool</h1>
+        <div className="relative bg-cool-grey-50 m-auto h-7 shadow-xl">
+            <h1 className="absolute w-full text-center text-2xl bottom-2 text-cool-grey-900 font-semibold">Timeclock Tool</h1>
+            <Link className="absolute text-cool-grey-500 hover:text-cool-grey-700 bottom-3 left-5 cursor-pointer" href="./">Back to Admin</Link>
         </div>
 
-        <div className="flex w-fit m-auto">
+        <div className="flex w-fit m-auto mt-2">
 
             {/* DATA INPUT */}
-            <div className="p-6 m-3 h-fit w-13 border-t-red-vivid-600 border-t-8 rounded bg-cool-grey-50 shadow-lg">
+            <div className="p-6 m-3 h-fit w-13 border-t-cyan-800 border-t-8 rounded bg-cool-grey-50 shadow-lg">
 
-                <h2 className="font-sans text-lg mb-5 text-cool-grey-600">Data Input</h2>
+                {/* <h2 className="font-sans text-lg mb-5 text-cool-grey-600">Data Input</h2> */}
                 
                 <div className="mb-5">
                 <label className="font-sans text-cool-grey-900 text-xl font-semibold" htmlFor="employee_data">Employee Data</label>
@@ -240,18 +243,18 @@ export default function App() {
                 <div className="mb-5">
                 <label className="font-sans text-cool-grey-600 text-md" htmlFor="start_date"><span className="text-xl text-cool-grey-900 font-semibold">Start Date</span> for Pay Period</label>
                     <input id="start_date" type="date" defaultValue={(moment().startOf('week').add(-2, 'week')).format('YYYY-MM-DD')} onChange={e => { setStart(e.target.value) }} 
-                            className="w-10 p-2 text-md text-cool-grey-900 bg-cool-grey-100 focus:outline-cool-grey-500 rounded" />
+                            className="w-10 p-2 mt-1 text-md text-cool-grey-900 bg-cool-grey-100 focus:outline-cool-grey-500 rounded" />
                 </div>
 
                 <div className="mb-5">
                     <label className="font-sans text-cool-grey-600 text-md" htmlFor="end_date"><span className="text-xl text-cool-grey-900 font-semibold">End Date</span> for Pay Period</label>
                     <input id="end_date" type="date" defaultValue={(moment().startOf('week').add(-1, 'day')).format('YYYY-MM-DD')} onChange={e => { setEnd(e.target.value) }} 
-                            className="w-10 p-2 text-md text-cool-grey-900 bg-cool-grey-100 focus:outline-cool-grey-500 rounded" />
+                            className="w-10 p-2 mt-1 text-md text-cool-grey-900 bg-cool-grey-100 focus:outline-cool-grey-500 rounded" />
                 </div>
 
                 <div className="mb-3">
-                    <h3 className="font-sans text-xl font-semibold">Select Employee</h3>
-                    <div className="flex">
+                    <h3 className="font-sans text-xl font-semibold text-cool-grey-900">Select Employee</h3>
+                    <div className="flex mt-1">
                         <select className="w-11 p-2 mr-2 text-md text-cool-grey-900 bg-cool-grey-100 focus:outline-cool-grey-500 rounded" name="employee" id="employee" value={selected} onChange={e => { setSelected(e.target.value) }}>
                             <option value={0} key={0}>Overview</option>
                             {employees.map((employee) => {
@@ -262,13 +265,14 @@ export default function App() {
                             let next_employee = employees.find((e) => e.id > selected );
                             if (next_employee == undefined) setSelected(0);
                             else setSelected(next_employee.id);
-                        } }> Next </button>
+                        } }>Next</button>
                     </div>
                 </div>
+
             </div>
 
             {/* EMPLOYEE DATA */}
-            <div className="p-6 m-3 w-16 border-t-red-vivid-600 border-t-8 rounded bg-cool-grey-50 shadow-lg">
+            <div className="p-6 m-3 w-16 border-t-cyan-800 border-t-8 mb-12 rounded bg-cool-grey-50 shadow-lg">
                 {employees.find((employee) => employee.id == selected ) != undefined && 
                 <EmployeeData   employee={employees.find((employee) => employee.id == selected )} 
                                 data={changedClock.filter((entry) => selected == entry.id )} 
@@ -287,14 +291,17 @@ export default function App() {
 function Overview ( { employees, data, start, end } ) {
 
     return <>
-        <h2 className="font-sans text-2xl mb-3 font-semibold">Employees</h2>
-        {
-            employees.map((employee) => {
-                return <li key={employee.id}>
-                    <b>{employee.name}</b>: {findHours( { data: data.filter((entry) => { return entry.id == employee.id && !entry.deleted }) } )}
-                </li>;
-            })
-        }
+        <h3 className="font-sans text-xl font-semibold text-cool-grey-900">Employees</h3>
+        <div className="mt-3">
+            {
+                employees.map((employee) => {
+                    return <li key={employee.id} className="list-none leading-5 pb-2 pl-2">
+                        <div className="font-semibold text-lg text-cool-grey-900">{employee.name}</div>
+                        <div className="pl-2 text-cool-grey-800">{findHours( { data: data.filter((entry) => { return entry.id == employee.id && !entry.deleted }) } )}</div>
+                    </li>;
+                })
+            }
+        </div>
     </>
 
 }
@@ -307,29 +314,41 @@ function EmployeeData ( {employee, data, deleteTime, addTime, setBreak, start, e
 
     const [ datetime, setDatetime ] = useState("");
 
-    const timeclockRows = []
+    const timeclockRows = [];
 
     let gap = 0;
 
     let first, second;
 
+    let clockinRow = [];
+
     for (let i = 0; i < data.length; i++) {
 
         let clockin = data[i];
 
-        timeclockRows.push(<li 
-                    className={`${ "cursor-pointer mb-0.5" }
+        clockinRow.push(<p 
+                    className={`${ "cursor-pointer mb-1 text-cool-grey-900" }
                             ${ clockin.deleted && "line-through"}
                             ${ clockin.created && "font-bold"} `}
                     key={clockin.unique}
-                    onClick={() => deleteTime(clockin.id, clockin.unique)}>
+                    onClick={() => {
+                            deleteTime(clockin.id, clockin.unique);
+                            console.log(clockin.unique);
+                        }
+                    }>
                         {moment(clockin.date + ' ' + clockin.time).format('M/DD/YY - h:mm A')}
-                </li>)
+                </p>)
 
         if (!clockin.deleted) {
+
             gap++;
-            if (gap % 2 == 1) first = new Date(clockin.date + ' ' + clockin.time);
-            else {
+
+            if (gap % 2 == 1) {
+
+                first = new Date(clockin.date + ' ' + clockin.time);
+
+            } else {
+
                 second = new Date(clockin.date + ' ' + clockin.time);
 
                 let length = (second - first) / (1000 * 60 * 60);
@@ -339,30 +358,54 @@ function EmployeeData ( {employee, data, deleteTime, addTime, setBreak, start, e
                 let hours = Math.floor(length);
                 let minutes = Math.floor(60 * (length % 1));
 
-                timeclockRows.push(<div className="mb-6" key={clockin.unique + ' shift'}>
-                    <p className="font-semibold">Total: {`${hours} ${hours != 1 ? "hours" : "hour"}, ${minutes} ${minutes != 1 ? "minutes" : "minute"}`}</p>
-                    <input type='checkbox' checked={clockin.hasBreak} onChange={(e) => setBreak(clockin.unique, e.target.checked)}/> Subtract Break
-                </div>)
+                if (minutes < 0 || hours < 0) {
+                    minutes = 0;
+                    hours = 0;
+                }
+
+                timeclockRows.push(
+                    <div className="w-12 h-fit mb-5">
+                        <p className="font-semibold text-lg">{`${hours} ${hours != 1 ? "hours" : "hour"}, ${minutes} ${minutes != 1 ? "minutes" : "minute"}`}</p>
+                        {clockinRow}
+                        <div className="flex mt-2">
+                            <input id={clockin.unique + "break"} className="accent-cyan-800 w-4 h-4" type='checkbox' checked={clockin.hasBreak} onChange={(e) => setBreak(clockin.unique, e.target.checked)}/>
+                            <label for={clockin.unique + "break"} className="pl-1 text-gray-600 text-md leading-4"> Break</label>
+                        </div>
+                    </div>
+                );
+
+                clockinRow = [];
+
             }
+        }
+        
+        if (i + 1 == data.length && clockinRow.length != 0) {
+
+            timeclockRows.push(
+                <div className="w-12 h-fit mb-5">
+                    <p className="font-semibold text-lg">Incomplete Shift</p>
+                    {clockinRow}
+                </div>
+            );
+
         }
 
     }
 
     return <>
-        <h2 className="font-sans text-2xl mb-3 font-bold">{employee.name} (ID {employee.id}, Shift {employee.shift})</h2>
-        
         <div className="flex">
-            <div className="w-96">
-                <h2 className="font-sans text-lg mb-3 font-semibold">Timeclock</h2>
+            <div className="w-96 font-sans">
+                <h3 className="font-sans text-xl font-semibold text-cool-grey-900 mb-4">{employee.name} (ID {employee.id}, Shift {employee.shift})</h3>
+                <input className="w-12 h-6 p-2 mr-2 mb-5 text-md text-cool-grey-900 bg-cool-grey-100 border border-cyan-800 shadow-md focus:outline-cool-grey-500 rounded" type="datetime-local" onChange={(e) => setDatetime(e.target.value)} />
+                <button className="text-md w-7 h-6 p-1 mr-2 text-cool-grey-900 rounded hover:bg-cool-grey-100 focus:outline-cool-grey-500 transition-colors" onClick={(e) => addTime(employee.id, datetime)}>Add</button>
                 <div>{timeclockRows}</div>
-                <input className="border rounded border-gray-700 mr-2 p-2" type="datetime-local" onChange={(e) => setDatetime(e.target.value)} />
-                <button className="border rounded border-gray-700 p-2 hover:bg-gray-100 transition-colors " onClick={(e) => addTime(employee.id, datetime)}>Add</button>
             </div>
-            <div>
-                <h2 className="font-sans text-lg font-semibold">Hours</h2>
-                <b>Total:</b> {findHours({data: data.filter((entry) => !entry.deleted)})}
-                <h2 className="font-sans text-lg mt-3 font-semibold">Display</h2>
-                <p className="font-mono whitespace-pre">{generateGraphic({data: data.filter((entry) => !entry.deleted), start, end})}</p>
+            <div className="text-cool-grey-900">
+                {/* <h3 className="font-sans text-xl font-semibold text-cool-grey-900 mb-4">Results</h3> */}
+                <p className="whitespace-pre font-Courier">
+                    <span className="font-bold">Total:</span> {findHours({data: data.filter((entry) => !entry.deleted)})} <br/><br/>
+                    {generateGraphic({data: data.filter((entry) => !entry.deleted), start, end})}
+                </p>
             </div>
         </div>
     </>
@@ -437,8 +480,10 @@ function applyChanges ( clock, changes ) {
 
             let match = changedClock.find((clockin) => change.unique == clockin.unique);
 
-            if (change.deleted != undefined) match.deleted = change.deleted;
-            if (change.hasBreak != undefined) match.hasBreak = change.hasBreak;
+            if (match != undefined) {
+                if (change.deleted != undefined) match.deleted = change.deleted;
+                if (change.hasBreak != undefined) match.hasBreak = change.hasBreak;
+            }
 
         }
 

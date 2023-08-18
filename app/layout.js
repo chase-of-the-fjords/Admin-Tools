@@ -11,6 +11,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="stylesheet" href="https://use.typekit.net/soh6cnl.css" />
+      </head>
       <body className="bg-cool-grey-100">{children}</body>
     </html>
   )
