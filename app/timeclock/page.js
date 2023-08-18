@@ -515,6 +515,8 @@ function findHours( { data } ) {
 
         if (second.hasBreak) length -= 0.5;
 
+        if (length < 0) length = 0;
+
         total_hours += length;
 
     }
@@ -548,6 +550,8 @@ function findHoursRange( { data, start, end } ) {
         let length = (end_time - start_time) / (1000 * 60 * 60);
 
         if (second.hasBreak) length -= 0.5;
+
+        if (length < 0) length = 0;
 
         total_hours += length;
 
@@ -607,7 +611,7 @@ function generateGraphic( { data, start, end } ) {
 
         if (first_duration < 0) first_duration = -1;
 
-        graphic[first_duration] = '?';
+        graphic[first_duration] = '[';
 
         for (let i = first_duration + 1; i < size * 24; i++) {
             graphic[i] = '?';
