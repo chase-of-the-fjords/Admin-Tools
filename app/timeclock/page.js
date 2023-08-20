@@ -281,16 +281,18 @@ export default function App() {
 function Overview ( { employees, data, start, end } ) {
 
     return <>
-        <h3 className="font-sans text-xl font-semibold text-cool-grey-900">Employees</h3>
-        <div className="mt-3">
-            {
-                employees.map((employee) => {
-                    return <li key={employee.id} className="pb-2 pl-2 leading-5 list-none">
-                        <div className="text-lg font-semibold text-cool-grey-900">{employee.name}</div>
-                        <div className="pl-2 text-cool-grey-800">{findHours( { data: data.filter((entry) => { return entry.id == employee.id && !entry.deleted }) } )}</div>
-                    </li>;
-                })
-            }
+        <div>
+            <h3 className="block font-sans text-xl font-semibold text-cool-grey-900">Employees</h3>
+            <div className="mt-3">
+                {
+                    employees.map((employee) => {
+                        return <li key={employee.id} className="pb-2 pl-2 leading-5 list-none">
+                            <div className="text-lg font-semibold text-cool-grey-900">{employee.name}</div>
+                            <div className="pl-2 text-cool-grey-800">{findHours( { data: data.filter((entry) => { return entry.id == employee.id && !entry.deleted }) } )}</div>
+                        </li>;
+                    })
+                }
+            </div>
         </div>
     </>
 
