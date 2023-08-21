@@ -10,7 +10,7 @@ import Link from 'next/link';
  */
 export default function App() {
 
-    let link_style = "text-red-vivid-700 hover:text-red-vivid-900 transition-colors block w-fit";
+    let link_style = "text-cyan-700 hover:text-cyan-900 transition-colors block w-fit";
 
         // JSX (RETURN VALUE)
 
@@ -26,18 +26,18 @@ export default function App() {
             {/* List of pages */}
             <div className="box-content w-12 p-5 m-auto mt-8 text-xl border-t-8 rounded-md shadow-lg border-t-cyan-800 bg-cool-grey-50">
                 <Link className={link_style} href="//shop.origingolf.com">Shop Display</Link>
-                <div className="mb-2 ml-6">
+                <div className="mb-2 ml-2">
                     {[
-                        {text: "Edit Shop", link: "//shop.origingolf.com/edit"},
-                        {text: "History Log", link: "//shop.origingolf.com/history"},
-                        {text: "Moment History", link: "//shop.origingolf.com/moment"},
+                        {text: "- Edit Shop", link: "//shop.origingolf.com/edit"},
+                        {text: "- History Log", link: "//shop.origingolf.com/history"},
+                        {text: "- Moment History", link: "//shop.origingolf.com/moment"},
                     ].map((obj) =>
                         {
                             return <Link key={obj.text} className={link_style} href={obj.link}>{obj.text}</Link>
                         }
                     )}
                 </div>
-                <Link className={link_style} href="./timeclock">Timeclock</Link>
+                <Link className={`${link_style} mb-2`} href="./timeclock">Timeclock</Link>
                 <Link className={link_style} href="//drive.google.com/file/d/1CN_Xb9dpm3dpDMwEbjDmtKG6m7rchUwT/view?usp=drive_link">Conversion Tool</Link>
             </div>
 
