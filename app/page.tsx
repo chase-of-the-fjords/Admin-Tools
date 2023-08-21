@@ -2,23 +2,22 @@
 'use client'
 
 import Link from 'next/link';
+import { ReactElement } from 'react';
 
 /**
  * The default export for the edit page.
  * 
  * @returns JSX representation of the edit page.
  */
-export default function App() {
+function App(): ReactElement {
 
-    let link_style = "text-cyan-700 hover:text-cyan-900 transition-colors block w-fit";
+    let link_style: string = "text-cyan-700 hover:text-cyan-900 transition-colors block w-fit";
 
         // JSX (RETURN VALUE)
 
-    return (<>
+    return <>
         {/* HEADER */}
-        <div className="fixed top-0 w-screen m-auto shadow-xl h-7 bg-cool-grey-50">
-            <h1 className="absolute w-full text-xl font-semibold text-center sm:text-2xl bottom-3 sm:bottom-2 text-cool-grey-900">Admin Tools</h1>
-        </div>
+        <Menu />
 
         {/* FULL PAGE */}
         <div className="font-sans">
@@ -42,13 +41,16 @@ export default function App() {
             </div>
 
         </div>
-    </>
-    );
+    </>;
 }
 
 // The menu bar component.
-function Menu() {
+function Menu () {
 
-    return <h1>Origin Golf Machine Shop</h1>
+    return (<div className="fixed top-0 w-screen m-auto shadow-xl h-7 bg-cool-grey-50">
+        <h1 className="absolute w-full text-xl font-semibold text-center sm:text-2xl bottom-3 sm:bottom-2 text-cool-grey-900">Admin Tools</h1>
+    </div>);
 
 }
+
+export default App;
