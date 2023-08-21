@@ -10,32 +10,39 @@ import Link from 'next/link';
  */
 export default function App() {
 
-    let link_style = "text-red-700 hover:text-purple-900 transition-colors block w-fit";
+    let link_style = "text-red-vivid-700 hover:text-red-vivid-900 transition-colors block w-fit";
 
         // JSX (RETURN VALUE)
 
-    return (<div className="font-sans p-4">
-        {/* Main header */}
-        <h1 className="text-3xl pb-4">Origin Golf Admin Tools</h1>
-        
-        {/* List of pages */}
-        <div className="pl-4 text-xl">
-            <Link className={link_style} href="//shop.origingolf.com">Shop Display</Link>
-            <div className="ml-6">
-                {[
-                    {text: "Edit Shop", link: "//shop.origingolf.com/edit"},
-                    {text: "History Log", link: "//shop.origingolf.com/history"},
-                    {text: "Moment History", link: "//shop.origingolf.com/moment"},
-                ].map((obj) =>
-                    {
-                        return <Link key={obj.text} className={link_style} href={obj.link}>{obj.text}</Link>
-                    }
-                )}
-            </div>
-            <Link className={link_style} href="./timeclock">Timeclock</Link>
-            <Link className={link_style} href="//drive.google.com/file/d/1CN_Xb9dpm3dpDMwEbjDmtKG6m7rchUwT/view?usp=drive_link">Conversion Tool</Link>
+    return (<>
+        {/* HEADER */}
+        <div className="fixed top-0 w-screen m-auto shadow-xl h-7 bg-cool-grey-50">
+            <h1 className="absolute w-full text-xl font-semibold text-center sm:text-2xl bottom-3 sm:bottom-2 text-cool-grey-900">Admin Tools</h1>
         </div>
-    </div>
+
+        {/* FULL PAGE */}
+        <div className="font-sans">
+
+            {/* List of pages */}
+            <div className="box-content w-12 p-5 m-auto mt-8 text-xl border-t-8 rounded-md shadow-lg border-t-cyan-800 bg-cool-grey-50">
+                <Link className={link_style} href="//shop.origingolf.com">Shop Display</Link>
+                <div className="mb-2 ml-6">
+                    {[
+                        {text: "Edit Shop", link: "//shop.origingolf.com/edit"},
+                        {text: "History Log", link: "//shop.origingolf.com/history"},
+                        {text: "Moment History", link: "//shop.origingolf.com/moment"},
+                    ].map((obj) =>
+                        {
+                            return <Link key={obj.text} className={link_style} href={obj.link}>{obj.text}</Link>
+                        }
+                    )}
+                </div>
+                <Link className={link_style} href="./timeclock">Timeclock</Link>
+                <Link className={link_style} href="//drive.google.com/file/d/1CN_Xb9dpm3dpDMwEbjDmtKG6m7rchUwT/view?usp=drive_link">Conversion Tool</Link>
+            </div>
+
+        </div>
+    </>
     );
 }
 

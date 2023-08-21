@@ -206,7 +206,7 @@ export default function App() {
         <div className="flex flex-col m-auto mt-8 mb-12 w-fit sm:flex-row">
 
             {/* DATA INPUT */}
-            <div className="box-content w-12 p-4 m-3 border-t-8 rounded shadow-lg xl:p-5 h-fit border-t-cyan-800 bg-cool-grey-50">
+            <div className="box-content w-12 p-4 mx-3 border-t-8 rounded shadow-lg xl:p-5 h-fit border-t-cyan-800 bg-cool-grey-50">
 
                 {/* <h2 className="mb-5 font-sans text-lg text-cool-grey-600">Data Input</h2> */}
                 
@@ -258,7 +258,7 @@ export default function App() {
             </div>
 
             {/* EMPLOYEE DATA */}
-            <div className="box-content flex flex-col w-12 p-4 m-3 mb-6 border-t-8 rounded shadow-lg xl:p-5 md:w-13 lg:w-15 2xl:w-16 lg:flex-row border-t-cyan-800 bg-cool-grey-50">
+            <div className="box-content flex flex-col w-12 p-4 mx-3 mb-6 border-t-8 rounded shadow-lg xl:p-5 md:w-13 lg:w-15 2xl:w-16 lg:flex-row border-t-cyan-800 bg-cool-grey-50">
                 {employees.find((employee) => employee.id == selected ) != undefined && 
                 <EmployeeData   employee={employees.find((employee) => employee.id == selected )} 
                                 data={changedClock.filter((entry) => selected == entry.id )} 
