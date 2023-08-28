@@ -200,8 +200,16 @@ export default function App() {
         {/* HEADER */}
         <div className="fixed top-0 w-screen m-auto shadow-xl h-7 bg-cool-grey-50">
             <h1 className="absolute w-full text-xl font-semibold text-center sm:text-2xl bottom-3 sm:bottom-2 text-cool-grey-900">Timeclock Tool</h1>
-            <Link className="absolute cursor-pointer text-cool-grey-500 hover:text-cool-grey-700 bottom-3 sm:bottom-2 left-3" href="./">Home</Link>
+            {/* <Link className="absolute cursor-pointer text-cool-grey-500 hover:text-cool-grey-700 bottom-3 sm:bottom-2 left-3" href="./">Home</Link> */}
+            <Link href="./" className="absolute top-3 sm:top-2 left-3 sm:left-2">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-5 sm:w-6">
+                    <path className="fill-cool-grey-300" d="M9 22H5a1 1 0 0 1-1-1V11l8-8 8 8v10a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v4a1 1 0 0 1-1 1zm3-9a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                    <path className="fill-cyan-800" d="M12.01 4.42l-8.3 8.3a1 1 0 1 1-1.42-1.41l9.02-9.02a1 1 0 0 1 1.41 0l8.99 9.02a1 1 0 0 1-1.42 1.41l-8.28-8.3z"/>
+                </svg>
+            </Link>
         </div>
+
+        
 
         <div className="flex flex-col m-auto mt-8 mb-12 space-y-4 sm:space-y-0 sm:space-x-4 w-fit sm:flex-row">
 
