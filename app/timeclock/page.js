@@ -256,9 +256,22 @@ export default function App() {
                             })}
                         </select>
                         <button className="block p-1 mr-2 transition-colors rounded text-md w-7 text-cool-grey-900 hover:bg-cool-grey-100 focus:outline-cool-grey-500" onClick={ () => {
-                            let next_employee = employees.find((e) => e.id > selected );
-                            if (next_employee == undefined) setSelected(0);
-                            else setSelected(next_employee.id);
+                            
+                            let next_employee = 0;
+
+                            if (selected == 0 && employees.length > 0) next_employee = employees[0].id;
+                            else {
+                                for (let i = 0; i < employees.length; i++) {
+                                    if (employees[i].id == selected) {
+                                        if (i + 1 < employees.length) {
+                                            next_employee = employees[i + 1].id;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+
+                            setSelected(next_employee);
                         } }>Next</button>
                     </div>
                 </div>
