@@ -22,6 +22,11 @@ const tools = [
         func: okumaToHaas,
     },
     {
+        name: "Grab Tools",
+        tool_id: "grabTools",
+        func: grabTools,
+    },
+    {
         name: "Set New Zs",
         tool_id: "set-new-zs",
         func: setNewZs,
@@ -526,6 +531,86 @@ function okumaToHaas(input) {
     }
 
     return output;
+
+}
+
+function grabTools(input) {
+
+    let output = "";
+
+    let lines = input.split('\n');
+
+    let tools = []
+
+    for (let l = 0; l < lines.length; l++) {
+
+        let line = lines[l];
+
+        for (let i = 0; i < line.length; i++) {
+
+            let c = line[i];
+
+            if (c == '(') {
+
+                while (i + 1 < line.length && c != ')') {
+
+                    i++
+                    c = line[i]
+
+                }
+
+            } else if (c.toLocaleUpperCase() == 'T') {
+
+                let digit1 = NaN
+                let digit2 = NaN
+
+                if (i + 1 < line.length) digit1 = parseInt(line[i + 1])
+                if (i + 2 < line.length) digit2 = parseInt(line[i + 2])
+                
+                if (!isNaN(digit1)) {
+
+                    let text = ""
+
+                    if (l >= 2) text += lines[l - 2] + '\n';
+                    if (l >= 1) text += lines[l - 1] + '\n';
+                    text += line
+
+                    i += 2
+
+                    let tool = digit1
+
+                    if (!isNaN(digit2)) {
+                        tool *= 10
+                        tool += digit2
+                        i++
+                    }
+
+                    if (tools[tool] != null) tools[tool].push(text)
+                    else tools[tool] = [text]
+
+                }
+
+            }
+
+        }
+
+    }
+
+    for (let t = 0; t < tools.length; t++) {
+
+        if (tools[t] != null && tools[t].length != 0) {
+
+            for (let i = 0; i < tools[t].length; i++) {
+
+                output += tools[t][i] + '\n\n'
+
+            }
+
+        }
+
+    }
+
+    return output.trim()
 
 }
 
