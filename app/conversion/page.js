@@ -37,6 +37,12 @@ export default function App() {
             // Show the file save dialog.
             const handle = await showSaveFilePicker({
               suggestedName,
+              types: [
+                {
+                    description: "Text file",
+                    accept: { "text/plain": [".txt", ".min", ".nc"] }
+                },
+              ]
             });
             // Write the blob to the file.
             const writable = await handle.createWritable();
@@ -57,7 +63,7 @@ export default function App() {
         // Create the `<a download>` element and append it invisibly.
         const a = document.createElement('a');
         a.href = blobURL;
-        a.download = suggestedName;
+        a.download = "output.txt";
         a.style.display = 'none';
         document.body.append(a);
         // Programmatically click the element.
@@ -99,6 +105,7 @@ export default function App() {
             <div className="relative block w-full h-6 m-auto mt-8">
                 <input type="file" 
                     className="absolute left-0 w-12 mr-4 transition-colors file:w-9 file:cursor-pointer file:border-none file:h-6 file:rounded file:shadow-md file file:bg-cyan-700 file:hover:bg-cyan-800 file:text-cyan-50 file:hover:text-cyan-100"
+                    accept=".txt,.text,.nc,.min"
                     onInput={(e) => getInputData(e)}
                     />
                 <button className="absolute right-0 h-6 ml-4 transition-colors rounded shadow-md w-9 bg-cyan-700 hover:bg-cyan-800 text-cyan-50 hover:text-cyan-100"
