@@ -120,6 +120,7 @@ export default function App() {
                         <option value="keep">No Change</option>
                         <option value="sign-switch">Switch Signs</option>
                         <option value="haas-to-okuma">Haas to Okuma</option>
+                        <option value="okuma-to-haas">Okuma to Haas</option>
                     </select>
                 </div>
             </div>
@@ -148,6 +149,7 @@ function OutputBox( { conversion, input, output, setOutput } ) {
         if (conversion == 'keep') setOutput(keepValue(input));
         if (conversion == 'sign-switch') setOutput(signSwitch(input));
         if (conversion == 'haas-to-okuma') setOutput(haasToOkuma(input));
+        if (conversion == 'okuma-to-haas') setOutput(okumaToHaas(input));
     }, [conversion, input])
 
     return <textarea className="ml-4 font-mono border-2 rounded shadow-xl resize-none border-cool-grey-400 w-14 h-14" value={output} onChange={(e) => setOutput(e.target.value)}>
@@ -361,6 +363,110 @@ function haasToOkuma(input) {
 
                         output += 'G116 T0' + number;
                         i += 5;
+                        break hto_chars;
+
+                    }
+
+                } catch (e) { }
+
+                output += c;
+
+            } else {
+
+                output += c;
+
+            }
+
+        }
+
+        if (l + 1 < lines.length) output += '\n';
+
+    }
+
+    return output;
+
+}
+
+// Rules:
+// - Ignore anything within parentheses
+// - G56 -> G43
+// - G116 T## -> T## M06 and G116 T# -> T0# M06
+
+function okumaToHaas(input) {
+
+    let output = "";
+
+    let lines = input.split('\n');
+
+    for (let l = 0; l < lines.length; l++) {
+
+        let line = lines[l]
+
+        for (let i = 0; i < line.length; i++) {
+
+            let c = line[i];
+
+            hto_chars:
+            // Parentheses
+            if (c == '(') {
+
+                output += c;
+
+                while (i + 1 < line.length && c != ')') {
+                    i++;
+                    c = line[i];
+                    output += c;
+                }
+    
+            } else if (c == 'G' || c == 'g') {
+
+                // G56 -> G43
+
+                try {
+
+                    let tool = line.substring(i, i + 3);
+
+                    if (tool.toLocaleUpperCase() == 'G56') {
+
+                        output += 'G43';
+                        i += 2;
+                        break hto_chars;
+
+                    }
+
+                } catch (e) { }
+
+                // G116 T## -> T## M06
+
+                try {
+
+                    let command = line.substring(i, i + 6);
+
+                    let digit1 = parseInt(line[i + 6])
+                    let digit2 = parseInt(line[i + 7])
+
+                    if (command.toLocaleUpperCase() == 'G116 T' && !isNaN(digit1) && !isNaN(digit2)) {
+
+                        output += 'T' + digit1 + digit2 + " M06";
+                        i += 7;
+                        break hto_chars;
+
+                    }
+
+                } catch (e) { }
+
+                // G116 T# -> T0# M06
+
+                try {
+
+                    let command = line.substring(i, i + 6);
+
+                    let digit = parseInt(line[i + 6])
+
+                    if (command.toLocaleUpperCase() == 'G116 T' && !isNaN(digit)) {
+
+                        output += 'T0' + digit + " M06";
+                        i += 6;
                         break hto_chars;
 
                     }
