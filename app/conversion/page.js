@@ -5,6 +5,39 @@ import React, { useState, useEffect } from "react";
 
 import Link from "next/link";
 
+const tools = [
+    {
+        name: "Switch Signs",
+        tool_id: "sign-switch",
+        func: signSwitch,
+    },
+    {
+        name: "Haas to Okuma",
+        tool_id: "haas-to-okuma",
+        func: haasToOkuma,
+    },
+    {
+        name: "Okuma to Haas",
+        tool_id: "okuma-to-haas",
+        func: okumaToHaas,
+    },
+    {
+        name: "Add New Zs",
+        tool_id: "add-new-zs",
+        func: addNewZs,
+    },
+    {
+        name: "Remove Sequence Numbers",
+        tool_id: "remove-numbers",
+        func: removeSequenceNumbers,
+    },
+    {
+        name: "Do Nothing",
+        tool_id: "keep",
+        func: keepValue,
+    },
+]
+
 /**
  * The default export for the view page.
  * 
@@ -116,11 +149,12 @@ export default function App() {
                 </button>
                 <div className="h-6 mx-auto w-fit">
                     <select className="w-12 h-6 font-semibold text-center rounded shadow-md bg-cool-grey-50" onChange={(e) => setConversion(e.target.value)} value={conversion}>
-                        <option value=""></option>
-                        <option value="keep">No Change</option>
-                        <option value="sign-switch">Switch Signs</option>
-                        <option value="haas-to-okuma">Haas to Okuma</option>
-                        <option value="okuma-to-haas">Okuma to Haas</option>
+                        <option key="empty" value=""></option>
+                        {
+                            tools.map((tool) => {
+                                return <option key={tool.tool_id} value={tool.tool_id}>{tool.name}</option>
+                            })
+                        }
                     </select>
                 </div>
             </div>
@@ -146,10 +180,9 @@ export default function App() {
 function OutputBox( { conversion, input, output, setOutput } ) {
 
     useEffect(() => {
-        if (conversion == 'keep') setOutput(keepValue(input));
-        if (conversion == 'sign-switch') setOutput(signSwitch(input));
-        if (conversion == 'haas-to-okuma') setOutput(haasToOkuma(input));
-        if (conversion == 'okuma-to-haas') setOutput(okumaToHaas(input));
+        tools.forEach((tool) => {
+            if (conversion == tool.tool_id) setOutput(tool.func(input));
+        })
     }, [conversion, input])
 
     return <textarea className="ml-4 font-mono border-2 rounded shadow-xl resize-none border-cool-grey-400 w-14 h-14" value={output} onChange={(e) => setOutput(e.target.value)}>
@@ -484,6 +517,97 @@ function okumaToHaas(input) {
         }
 
         if (l + 1 < lines.length) output += '\n';
+
+    }
+
+    return output;
+
+}
+
+// Rules:
+// - After a line starting with G00, on the first line of the format G01 Z#...
+// - Add 0.03 to the z-value, and place it on the line before.
+// 
+// Example: G00; G01 Z0.01; G01 Z0.05; ==> G00; Z0.04; G01 Z0.01; G01 Z0.05;
+
+function addNewZs(input) {
+
+    let output = "";
+
+    let lines = input.split('\n');
+
+    let readyToAdd = false;
+
+    for (let l = 0; l < lines.length; l++) {
+
+        let line = lines[l]
+
+        let words = line.split(' ')
+
+        if (words.length > 0) {
+
+            if (words[0].toLocaleUpperCase() == 'G00') {
+
+                readyToAdd = true;
+
+                output += line + '\n';
+
+            } else if (words[0].toLocaleUpperCase() == 'G01') {
+
+                if (readyToAdd && words.length >= 2) {
+
+                    try {
+
+                        let z_value = parseFloat(words[1].substring(1))
+
+                        z_value += 0.03
+
+                        output += "Z" + z_value.toLocaleString(
+                            'en-US',
+                            {
+                                minimumFractionDigits: 1,
+                                maximumFractionDigits: 4,
+                            }
+                        ).replace('0.', '.') + '\n';
+
+                    } catch (e) { }
+
+                }
+
+                output += line + '\n';
+
+                readyToAdd = false;
+
+            } else {
+
+                output += line + '\n'
+
+            }
+
+        }
+
+    }
+
+    return output.trim();
+
+}
+
+// Rules:
+// - Cut the first 6 characters of every line.
+// - If a line has less than 6 characters, set it blank.
+
+function removeSequenceNumbers(input) {
+
+    let output = "";
+
+    let lines = input.split('\n');
+
+    for (let l = 0; l < lines.length; l++) {
+
+        let line = lines[l]
+
+        if (line.length > 6) output += line.substring(6) + '\n';
+        else output += '\n'
 
     }
 
