@@ -37,6 +37,7 @@ function App(): ReactElement {
                     )}
                 </div>
                 <Link className={`${link_style} mb-2`} href="./timeclock">Timeclock</Link>
+                <Link className={`${link_style} mb-2`} href="./conversion">Conversion Tool (Web)</Link>
                 <Link className={link_style} href="//drive.google.com/file/d/1CN_Xb9dpm3dpDMwEbjDmtKG6m7rchUwT/view?usp=drive_link">Conversion Tool</Link>
             </div>
 
