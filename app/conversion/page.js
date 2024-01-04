@@ -22,6 +22,11 @@ const tools = [
         func: okumaToHaas,
     },
     {
+        name: "Set New Zs",
+        tool_id: "set-new-zs",
+        func: setNewZs,
+    },
+    {
         name: "Add New Zs",
         tool_id: "add-new-zs",
         func: addNewZs,
@@ -579,6 +584,145 @@ function addNewZs(input) {
                 readyToAdd = false;
 
             } else {
+
+                output += line + '\n'
+
+            }
+
+        }
+
+    }
+
+    return output.trim();
+
+}
+
+// Rules:
+// - Ignore comments
+// - At every G00 instruction that isn't followed by a G# instruction...
+// - Replace the line with G00 Z#.#, where Z#.# is the larger of:
+//      - The most recent Z value + 0.03
+//      - The next Z value + 0.03
+// - If neither exists, output the line as normal
+
+function setNewZs(input) {
+
+    let output = "";
+
+    let lastZ = NaN
+
+    let lines = input.split('\n');
+
+    for (let l = 0; l < lines.length; l++) {
+
+        let line = lines[l]
+
+        let words = line.split(' ')
+
+        if (words.length > 0) {
+
+            if (words[0].toLocaleUpperCase() == 'G00') {
+
+                if (words.length == 1 || !words[1].toLocaleUpperCase().includes("G")) {
+
+                    let nextZ = NaN;
+
+                    for (let j = l + 1; j < lines.length; j++) {
+
+                        let nextLine = lines[j]
+
+                        let nextWords = nextLine.split(' ')
+
+                        let isComment = false
+
+                        if (nextWords.length > 0) {
+
+                            for (let w = 0; w < nextWords.length; w++) {
+
+                                let word = nextWords[w]
+
+                                if (word.length > 0) {
+
+                                    if (word[0] == '(') isComment = true
+
+                                    if (!isComment) {
+
+                                        if ((word[0] == 'Z' || word[0] == 'z') && word.length > 1) {
+
+                                            try {
+                                                nextZ = parseFloat(word.substring(1))
+                                                j = lines.length
+                                            } catch (e) { }
+
+                                        }
+
+                                    }
+
+                                    if (word[word.length - 1] == ')') isComment = false
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                    if (!isNaN(nextZ) || !isNaN(lastZ)) {
+
+                        let newZ = Math.max(nextZ, lastZ) + 0.03
+                        if (isNaN(nextZ)) newZ = lastZ + 0.03
+                        if (isNaN(lastZ)) newZ = nextZ + 0.03
+
+                        output += "G00 Z" + newZ.toLocaleString(
+                            'en-US',
+                            {
+                                minimumFractionDigits: 1,
+                                maximumFractionDigits: 4,
+                            }
+                        ).replace('0.', '.') + '\n'
+
+                    } else {
+
+                        output += line + '\n'
+
+                    }
+
+                } else {
+
+                    output += line + '\n'
+
+                }
+
+            } else {
+
+                let isComment = false
+
+                for (let w = 0; w < words.length; w++) {
+
+                    let word = words[w]
+
+                    if (word.length > 0) {
+
+                        if (word[0] == '(') isComment = true
+
+                        if (!isComment) {
+
+                            if ((word[0] == 'Z' || word[0] == 'z') && word.length > 1) {
+
+                                try {
+                                    lastZ = parseFloat(word.substring(1))
+                                } catch (e) { }
+
+                            }
+
+                        }
+
+                        if (word[word.length - 1] == ')') isComment = false
+
+                    }
+
+                }
 
                 output += line + '\n'
 
