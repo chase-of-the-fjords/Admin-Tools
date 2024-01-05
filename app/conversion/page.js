@@ -42,14 +42,14 @@ const tools = [
         func: addNewZs,
     },
     {
-        name: "Add Decimals",
-        tool_id: "add-decimals",
-        func: addDecimals,
-    },
-    {
         name: "Remove Sequence Numbers",
         tool_id: "remove-numbers",
         func: removeSequenceNumbers,
+    },
+    {
+        name: "Add Decimals",
+        tool_id: "add-decimals",
+        func: addDecimals,
     },
     {
         name: "Do Nothing",
