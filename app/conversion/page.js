@@ -22,8 +22,13 @@ const tools = [
         func: okumaToHaas,
     },
     {
+        name: "Find Lowest Zs",
+        tool_id: "find-lowest-zs",
+        func: findLowestZs,
+    },
+    {
         name: "Grab Tools",
-        tool_id: "grabTools",
+        tool_id: "grab-tools",
         func: grabTools,
     },
     {
@@ -35,6 +40,11 @@ const tools = [
         name: "Add New Zs",
         tool_id: "add-new-zs",
         func: addNewZs,
+    },
+    {
+        name: "Add Decimals",
+        tool_id: "add-decimals",
+        func: addDecimals,
     },
     {
         name: "Remove Sequence Numbers",
@@ -255,7 +265,7 @@ function signSwitch(input) {
         }
     }
 
-    return output;
+    return output.trim();
 
 }
 
@@ -426,7 +436,7 @@ function haasToOkuma(input) {
 
     }
 
-    return output;
+    return output.trim();
 
 }
 
@@ -530,9 +540,142 @@ function okumaToHaas(input) {
 
     }
 
-    return output;
+    return output.trim();
 
 }
+
+// Rules:
+// - For every instance of T# or T##...
+// - Print the 2 lines before the tool, plus the tool the line is on.
+// - Do this in increasing order of tool number, for every instance of each tool.
+
+function findLowestZs(input) {
+
+    let output = "";
+
+    let lines = input.split('\n');
+
+    let tools = []
+
+    let currentTool = 0
+
+    for (let l = 0; l < lines.length; l++) {
+
+        let line = lines[l];
+
+        for (let i = 0; i < line.length; i++) {
+
+            let c = line[i];
+
+            if (c == '(') {
+
+                while (i + 1 < line.length && c != ')') {
+
+                    i++
+                    c = line[i]
+
+                }
+
+            } else if (c.toLocaleUpperCase() == 'G') {
+
+                try {
+
+                    if (line.substring(i, i + 3).toLocaleUpperCase() == 'G43') {
+
+                        i = line.length
+
+                    }
+
+                } catch (e) { }
+
+            } else if (c.toLocaleUpperCase() == 'T') {
+
+                let digit1 = NaN
+                let digit2 = NaN
+
+                if (i + 1 < line.length) digit1 = parseInt(line[i + 1])
+                if (i + 2 < line.length) digit2 = parseInt(line[i + 2])
+                
+                if (!isNaN(digit1)) {
+
+                    let text = ""
+
+                    if (l >= 2) text += lines[l - 2] + '\n';
+                    if (l >= 1) text += lines[l - 1] + '\n';
+                    text += line
+
+                    i += 2
+
+                    let tool = digit1
+
+                    if (!isNaN(digit2)) {
+                        tool *= 10
+                        tool += digit2
+                        i++
+                    }
+
+                    currentTool = tool
+
+                }
+
+            } else if (c.toLocaleUpperCase() == 'Z') {
+
+                let word = line.substring(i).split(' ')[0]
+
+                try {
+
+                    let depth = parseFloat(word.substring(1))
+
+                    if (tools[currentTool] == null || tools[currentTool] > depth) tools[currentTool] = depth
+
+                    i += word.length
+
+                } catch (e) {}
+
+            }
+
+        }
+
+    }
+
+    for (let t = 0; t < tools.length; t++) {
+
+        if (tools[t] != null) {
+
+            if (t == 0) output += 'T00 = ' + tools[t].toLocaleString(
+                'en-US',
+                {
+                    minimumFractionDigits: 1,
+                    maximumFractionDigits: 4,
+                }
+            ) + '\n';
+            else if (t < 10) output += 'T0' + t + ' = ' + tools[t].toLocaleString(
+                'en-US',
+                {
+                    minimumFractionDigits: 1,
+                    maximumFractionDigits: 4,
+                }
+            ) + '\n';
+            else output += 'T' + t + ' = ' + tools[t].toLocaleString(
+                'en-US',
+                {
+                    minimumFractionDigits: 1,
+                    maximumFractionDigits: 4,
+                }
+            ) + '\n';
+
+        }
+
+    }
+
+    return output.trim()
+
+}
+
+// Rules:
+// - For every instance of T# or T##...
+// - Print the 2 lines before the tool, plus the tool the line is on.
+// - Do this in increasing order of tool number, for every instance of each tool.
 
 function grabTools(input) {
 
@@ -814,6 +957,74 @@ function setNewZs(input) {
             }
 
         }
+
+    }
+
+    return output.trim();
+
+}
+
+function addDecimals(input) {
+    
+    let output = "";
+
+    let lines = input.split('\n');
+
+    for (let l = 0; l < lines.length; l++) {
+
+        let line = lines[l]
+
+        let words = line.split(' ')
+
+        let isComment = false
+
+        for (let i = 0; i < words.length; i++) {
+
+            let word = words[i]
+
+            if (i != 0) output += ' '
+
+            if (word.length > 0) {
+
+                if (word[0] == '(') isComment = true
+
+                if (!isComment && "XYZ".includes(word[0].toLocaleUpperCase())) {
+
+                    try {
+
+                        let value = parseFloat(word.substring(1))
+
+                        output += word[0] + value.toLocaleString(
+                            'en-US',
+                            {
+                                minimumFractionDigits: 1,
+                                maximumFractionDigits: 4,
+                            }
+                        ).replace('0.', '.')
+
+                    } catch (e) {
+
+                        output += word
+
+                    }
+
+                } else {
+
+                    output += word
+
+                }
+
+                if (word[word.length - 1] == ')') isComment = false
+
+            } else {
+
+                output += word
+
+            }
+
+        }
+
+        output += '\n'
 
     }
 
