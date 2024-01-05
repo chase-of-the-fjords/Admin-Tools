@@ -130,14 +130,18 @@ export default function App() {
 
       async function getInputData(e) {
 
-        e.preventDefault()
-        const reader = new FileReader()
-        setFileName(e.target.files[0].name)
-        reader.onload = async (e) => { 
-            const text = (e.target.result)
-            setInput(text);
-        };
-        if (Array.from(e.target.files).length > 0) reader.readAsText(e.target.files[0])
+        if (e.target.files.length > 0) {
+
+            e.preventDefault()
+            const reader = new FileReader()
+            setFileName(e.target.files[0].name)
+            reader.onload = async (e) => { 
+                const text = (e.target.result)
+                setInput(text);
+            };
+            if (Array.from(e.target.files).length > 0) reader.readAsText(e.target.files[0])
+
+        }
 
     }
 
