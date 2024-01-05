@@ -156,6 +156,7 @@ export default function App() {
                     <path className="fill-cyan-800" d="M12.01 4.42l-8.3 8.3a1 1 0 1 1-1.42-1.41l9.02-9.02a1 1 0 0 1 1.41 0l8.99 9.02a1 1 0 0 1-1.42 1.41l-8.28-8.3z"/>
                 </svg>
             </Link>
+            <Link className="absolute top-3 right-3 text-cool-grey-900 hover:underline" href="//drive.google.com/file/d/1CN_Xb9dpm3dpDMwEbjDmtKG6m7rchUwT/view?usp=drive_link">Download</Link>
         </div>
 
         <div className="block m-auto mt-4 w-fit h-fit">
