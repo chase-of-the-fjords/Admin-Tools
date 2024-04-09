@@ -20,7 +20,7 @@ function App() {
       {/* HEADER */}
       <Menu />
 
-      <div className="max-w-[280px] sm:max-w-[540px] lg:max-w-[800px] mx-auto mt-9">
+      <div className="max-w-[280px] sm:max-w-[540px] min-[840px]:max-w-[800px] mx-auto mt-9">
         <h3 className="mb-3 ml-6 text-2xl font-semibold">Machine Shop</h3>
 
         <div className="flex flex-wrap gap-[20px] p-[20px] rounded-lg shadow-inner bg-cool-grey-200">
@@ -47,7 +47,7 @@ function App() {
         </div>
       </div>
 
-      <div className="max-w-[280px] sm:max-w-[540px] lg:max-w-[800px] mx-auto mt-6 mb-6">
+      <div className="max-w-[280px] sm:max-w-[540px] min-[840px]:max-w-[800px] mx-auto mt-6 mb-6">
         <h3 className="mb-3 ml-6 text-2xl font-semibold">Admin Tools</h3>
 
         <div className="flex flex-wrap gap-[20px] p-[20px] rounded-lg shadow-inner bg-cool-grey-200">
