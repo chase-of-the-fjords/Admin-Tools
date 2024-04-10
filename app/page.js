@@ -70,7 +70,7 @@ function App() {
 // The menu bar component.
 function Menu() {
   return (
-    <div className="fixed top-0 w-screen h-8 m-auto shadow-xl bg-cool-grey-50">
+    <div className="fixed top-0 z-10 w-screen h-8 m-auto shadow-xl bg-cool-grey-50">
       <div className="mx-auto w-fit">
         <Link href="./">
           <img src="./inverted-logo.png" className="pr-3 mx-auto mt-2 h-7" />
