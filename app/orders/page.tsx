@@ -13,6 +13,7 @@ import {
 import { useEffect, useState, useMemo, useContext, createContext } from "react";
 
 import { Button } from "@/components/ui/button";
+
 import {
   Dialog,
   DialogContent,
@@ -23,6 +24,7 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
+
 import {
   Select,
   SelectContent,
@@ -30,8 +32,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+
 import {
   Form,
   FormControl,
@@ -41,6 +46,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -216,6 +227,7 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
         invalid_type_error: "Invalid input",
       })
     ),
+    notes: z.optional(z.string()),
   });
 
   type FormType = z.infer<typeof formSchema>;
@@ -229,6 +241,7 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
       completed: order.completed,
       total: order.quantity,
       priority: defaultPriority,
+      notes: order.notes,
     },
   });
 
@@ -243,7 +256,7 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
       quantity: data.total,
       completed: data.completed,
       priority: priority,
-      notes: "",
+      notes: data.notes,
       id: data.id,
       order_id: order.order_id,
     };
@@ -455,6 +468,28 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
                   </FormItem>
                 )}
               />
+
+              {/* NOTES */}
+              <FormField
+                name="notes"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem className="col-span-4">
+                    <FormLabel>Notes</FormLabel>
+                    <FormControl className="col-span-3">
+                      <div>
+                        <Textarea
+                          {...form.register("notes")}
+                          placeholder=""
+                          defaultValue={order.notes}
+                          onFocus={(e) => e.target.select()}
+                        />
+                        <FormMessage className="mt-2" />
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
             </div>
             <DialogFooter className="gap-2">
               <Button
@@ -506,6 +541,7 @@ function CreateOrderForm({ company }: { company: CompanyType }) {
         invalid_type_error: "Invalid input",
       })
     ),
+    notes: z.optional(z.string()),
   });
 
   type FormType = z.infer<typeof formSchema>;
@@ -519,6 +555,7 @@ function CreateOrderForm({ company }: { company: CompanyType }) {
       completed: 0,
       total: undefined,
       priority: undefined,
+      notes: undefined,
     },
   });
 
@@ -537,7 +574,7 @@ function CreateOrderForm({ company }: { company: CompanyType }) {
       quantity: data.total,
       completed: data.completed,
       priority: priority,
-      notes: "",
+      notes: data.notes,
       id: data.id,
     };
 
@@ -711,6 +748,27 @@ function CreateOrderForm({ company }: { company: CompanyType }) {
                             <SelectItem value="Low">Low</SelectItem>
                           </SelectContent>
                         </Select>
+                        <FormMessage className="mt-2" />
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              {/* NOTES */}
+              <FormField
+                name="notes"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem className="col-span-4">
+                    <FormLabel>Notes</FormLabel>
+                    <FormControl className="col-span-3">
+                      <div>
+                        <Textarea
+                          {...form.register("notes")}
+                          placeholder=""
+                          onFocus={(e) => e.target.select()}
+                        />
                         <FormMessage className="mt-2" />
                       </div>
                     </FormControl>

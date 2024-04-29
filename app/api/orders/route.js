@@ -12,7 +12,15 @@ export async function POST(request) {
   const order = await query({
     // The SQL query:
     query: `INSERT INTO orders (name, company, quantity, completed, priority, notes, start, id) 
-      VALUES ('${body.order.name}', ${body.order.company}, ${body.order.quantity}, ${body.order.completed}, ${body.order.priority}, '${body.order.notes}', CONVERT_TZ(UTC_TIMESTAMP(), "+00:00", "America/Los_Angeles"), '${body.order.id}')`,
+      VALUES (${JSON.stringify(body.order.name)}, ${JSON.stringify(
+      body.order.company
+    )}, ${body.order.quantity}, ${body.order.completed}, ${
+      body.order.priority
+    }, ${JSON.stringify(
+      body.order.notes
+    )}, CONVERT_TZ(UTC_TIMESTAMP(), "+00:00", "America/Los_Angeles"), ${JSON.stringify(
+      body.order.id
+    )})`,
     values: [],
   });
 
@@ -30,13 +38,13 @@ export async function PATCH(request) {
     // The SQL query:
     query: `UPDATE orders 
       SET 
-        name = '${body.order.name}',
-        company = ${body.order.company},
+        name = ${JSON.stringify(body.order.name)},
+        company = ${JSON.stringify(body.order.company)},
         quantity = ${body.order.quantity}, 
         completed = ${body.order.completed}, 
         priority = ${body.order.priority},
-        notes = '${body.order.notes}',
-        id = '${body.order.id}' 
+        notes = ${JSON.stringify(body.order.notes)},
+        id = ${JSON.stringify(body.order.id)} 
       WHERE order_id=${body.order.order_id}`,
     values: [],
   });
