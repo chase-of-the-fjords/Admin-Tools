@@ -42,6 +42,24 @@ export async function createOrder({ order, user }) {
 }
 
 /**
+ * Creates a new company given a company object.
+ */
+export async function createCompany({ company, user }) {
+  // The data being passed into the API.
+  const postData = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    },
+    body: JSON.stringify({ company, user }),
+  };
+
+  // Accesses the companies API.
+  const res = await fetch(`${window.location.origin}/api/companies`, postData);
+}
+
+/**
  * Edits an existing order given an order object.
  */
 export async function editOrder({ order, user }) {
@@ -60,6 +78,24 @@ export async function editOrder({ order, user }) {
 }
 
 /**
+ * Edits an existing company given an company object.
+ */
+export async function editCompany({ company, user }) {
+  // The data being passed into the API.
+  const postData = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    },
+    body: JSON.stringify({ company, user }),
+  };
+
+  // Accesses the orders API.
+  const res = await fetch(`${window.location.origin}/api/companies`, postData);
+}
+
+/**
  * Gets orders from the SQL database and stores them in the orders hook.
  */
 export async function deleteOrder({ order, user }) {
@@ -75,6 +111,24 @@ export async function deleteOrder({ order, user }) {
 
   // Accesses the orders API.
   const res = await fetch(`${window.location.origin}/api/orders`, postData);
+}
+
+/**
+ * Gets orders from the SQL database and stores them in the orders hook.
+ */
+export async function deleteCompany({ company, user }) {
+  // The data being passed into the API.
+  const postData = {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    },
+    body: JSON.stringify({ company, user }),
+  };
+
+  // Accesses the orders API.
+  const res = await fetch(`${window.location.origin}/api/companies`, postData);
 }
 
 /**
