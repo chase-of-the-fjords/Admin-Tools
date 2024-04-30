@@ -1044,6 +1044,9 @@ function CreateCompanyForm({
       message: "Name is required",
     }),
     logo: z.optional(z.string()),
+    priority: z.optional(
+      z.number().min(1, { message: "Priority must be at least 1" })
+    ),
   });
 
   type FormType = z.infer<typeof formSchema>;
@@ -1053,6 +1056,7 @@ function CreateCompanyForm({
     defaultValues: {
       name: "",
       logo: "",
+      priority: undefined,
     },
   });
 
@@ -1061,17 +1065,24 @@ function CreateCompanyForm({
   }, [isOpen]);
 
   const onSubmit = async (data: FormType) => {
-    let maxPriority = 1;
+    let priorityValue = data.priority;
 
-    for (let i = 0; i < companies.length; i++) {
-      if (companies[i].priority > maxPriority)
-        maxPriority = companies[i].priority;
+    if (priorityValue == undefined) {
+      priorityValue = 1;
+      for (let i = 0; i < companies.length; i++) {
+        if (
+          companies[i].priority > priorityValue &&
+          companies[i].priority < 5000
+        )
+          priorityValue = companies[i].priority;
+      }
+      priorityValue += 10;
     }
 
     let company = {
       name: data.name,
       image: data.logo,
-      priority: maxPriority + 1,
+      priority: priorityValue,
     };
 
     await createCompany({ company, user });
@@ -1115,7 +1126,7 @@ function CreateCompanyForm({
                 )}
               />
 
-              {/* NAME */}
+              {/* LOGO (Optional) */}
               <FormField
                 name="logo"
                 control={form.control}
@@ -1130,6 +1141,36 @@ function CreateCompanyForm({
                           {...form.register("logo")}
                           onFocus={(e) => e.target.select()}
                           placeholder="https://i.imgur.com/dnIig58.png"
+                        />
+                        <FormMessage className="mt-2" />
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              {/* PRIORITY (Optional) */}
+              <FormField
+                name="priority"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem className="col-span-4">
+                    <FormLabel htmlFor="priority" className="text-left">
+                      Priority
+                    </FormLabel>
+                    <FormDescription>
+                      Smaller values appear at the top of the page
+                    </FormDescription>
+                    <FormControl>
+                      <div>
+                        <Input
+                          {...form.register("priority", {
+                            setValueAs: (v) =>
+                              v === "" ? undefined : parseInt(v, 10),
+                          })}
+                          onFocus={(e) => e.target.select()}
+                          type="number"
+                          placeholder="50"
                         />
                         <FormMessage className="mt-2" />
                       </div>
@@ -1166,6 +1207,7 @@ function EditCompanyForm({
       message: "Name is required",
     }),
     logo: z.optional(z.string()),
+    priority: z.number().min(1, { message: "Priority must be at least 1" }),
   });
 
   type FormType = z.infer<typeof formSchema>;
@@ -1175,6 +1217,7 @@ function EditCompanyForm({
     defaultValues: {
       name: company.name,
       logo: company.image,
+      priority: company.priority,
     },
   });
 
@@ -1182,7 +1225,7 @@ function EditCompanyForm({
     let newCompany = {
       name: data.name,
       image: data.logo,
-      priority: company.priority,
+      priority: data.priority,
       id: company.id,
     };
 
@@ -1225,7 +1268,7 @@ function EditCompanyForm({
                 )}
               />
 
-              {/* NAME */}
+              {/* LOGO (OPTIONAL) */}
               <FormField
                 name="logo"
                 control={form.control}
@@ -1240,6 +1283,36 @@ function EditCompanyForm({
                           {...form.register("logo")}
                           onFocus={(e) => e.target.select()}
                           placeholder="https://i.imgur.com/dnIig58.png"
+                        />
+                        <FormMessage className="mt-2" />
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              {/* PRIORITY */}
+              <FormField
+                name="priority"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem className="col-span-4">
+                    <FormLabel htmlFor="priority" className="text-left">
+                      Priority
+                    </FormLabel>
+                    <FormDescription>
+                      Smaller values appear at the top of the page
+                    </FormDescription>
+                    <FormControl>
+                      <div>
+                        <Input
+                          {...form.register("priority", {
+                            setValueAs: (v) =>
+                              v === "" ? undefined : parseInt(v, 10),
+                          })}
+                          onFocus={(e) => e.target.select()}
+                          type="number"
+                          placeholder="50"
                         />
                         <FormMessage className="mt-2" />
                       </div>

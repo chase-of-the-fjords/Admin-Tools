@@ -56,7 +56,8 @@ export async function PATCH(request) {
     query: `UPDATE companies 
       SET 
         name = ${JSON.stringify(body.company.name)},
-        image = ${JSON.stringify(body.company.image)}
+        image = ${JSON.stringify(body.company.image)},
+        priority = ${JSON.stringify(body.company.priority)}
       WHERE id=${body.company.id}`,
     values: [],
   });
