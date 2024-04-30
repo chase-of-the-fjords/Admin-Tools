@@ -48,10 +48,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
-import { invalid } from "moment";
 
 const ReloadContext = createContext<Function>(() => {});
 const DataContext = createContext<{
@@ -265,8 +270,6 @@ function Company({
 }) {
   const { user, setUser } = useContext(UserContext);
 
-  let [fileExists, setFileExists] = useState(true);
-
   let sortedOrders = useMemo(() => {
     return orders.sort((a: OrderType, b: OrderType) => {
       if (a.priority > b.priority) return -1;
@@ -283,14 +286,11 @@ function Company({
       {/* Logo & button */}
       <div className="relative mb-4 h-fit">
         <div className="h-[48px]">
-          {fileExists ? (
+          {company.image != "" ? (
             <img
-              src={`/companies/logos/${company.name}.png`}
+              src={`${company.image}`}
               className="absolute bottom-0 h-[32px]"
               alt={company.name}
-              onError={() => {
-                setFileExists(false);
-              }}
             />
           ) : (
             <h3 className="absolute bottom-0 text-2xl font-semibold align-bottom">
@@ -414,15 +414,28 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
             </span>
             <span className="text-sm text-cool-grey-600">delivered</span>
           </div>
+          {/* Notes icon */}
+          {order.notes != "" && (
+            <div className="absolute top-2 right-3 fill-cool-grey-600">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24"
+                viewBox="0 -960 960 960"
+                width="24"
+              >
+                <path d="M120-240v-80h480v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" />
+              </svg>
+            </div>
+          )}
         </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] bg-white">
+        <DialogHeader>
+          <DialogTitle>Edit order</DialogTitle>
+          <DialogDescription>Edit an order.</DialogDescription>
+        </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <DialogHeader>
-              <DialogTitle>Edit order</DialogTitle>
-              <DialogDescription>Edit an order.</DialogDescription>
-            </DialogHeader>
             <div className="grid grid-cols-4 gap-4 py-4">
               {/* PART NAME */}
               <FormField
@@ -466,13 +479,11 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
                             <SelectValue placeholder="Company" />
                           </SelectTrigger>
                           <SelectContent>
-                            {companies.map((c: CompanyType) => {
-                              return (
-                                <SelectItem value={c.name} key={c.id}>
-                                  {c.name}
-                                </SelectItem>
-                              );
-                            })}
+                            {companies.map((c: CompanyType) => (
+                              <SelectItem value={c.name} key={c.id}>
+                                {c.name}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage className="mt-2" />
@@ -556,7 +567,6 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
               />
 
               {/* PRIORITY (LOW, MEDIUM, HIGH) */}
-              {/* COMPANY */}
               <FormField
                 name="priority"
                 control={form.control}
@@ -629,31 +639,57 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
       </DialogContent>
     </Dialog>
   ) : (
-    <div
-      className={`${priorityStyle} relative mb-4 w-13 h-[80px] bg-cool-grey-50 rounded-md border-l-8 shadow-md transition-all cursor-pointer hover:shadow-lg hover:-translate-y-1`}
-    >
-      {/* Name and number */}
-      <div className="absolute align-top top-3 left-3">
-        <span className="text-xl font-semibold">{order.name} </span>
-        {order.id != "" && (
-          <span className="text-md text-cool-grey-600">#{order.id}</span>
-        )}
-      </div>
-      {/* Quantity open */}
-      <div className="absolute align-bottom bottom-3 left-3">
-        <span className="text-xl font-semibold">
-          {order.quantity - order.completed}{" "}
-        </span>
-        <span className="text-md text-cool-grey-600">open</span>
-      </div>
-      {/* Right side */}
-      <div className="absolute pb-[1px] align-bottom bottom-3 right-3">
-        <span className="text-md">
-          {order.completed}/{order.quantity}{" "}
-        </span>
-        <span className="text-sm text-cool-grey-600">delivered</span>
-      </div>
-    </div>
+    <HoverCard>
+      <HoverCardTrigger asChild>
+        <div
+          className={`${priorityStyle} relative mb-4 w-13 h-[80px] bg-cool-grey-50 rounded-md border-l-8 shadow-md transition-all cursor-pointer hover:shadow-lg`}
+        >
+          {/* Name and number */}
+          <div className="absolute align-top top-3 left-3">
+            <span className="text-xl font-semibold">{order.name} </span>
+            {order.id != "" && (
+              <span className="text-md text-cool-grey-600">#{order.id}</span>
+            )}
+          </div>
+          {/* Quantity open */}
+          <div className="absolute align-bottom bottom-3 left-3">
+            <span className="text-xl font-semibold">
+              {order.quantity - order.completed}{" "}
+            </span>
+            <span className="text-md text-cool-grey-600">open</span>
+          </div>
+          {/* Right side */}
+          <div className="absolute pb-[1px] align-bottom bottom-3 right-3">
+            <span className="text-md">
+              {order.completed}/{order.quantity}{" "}
+            </span>
+            <span className="text-sm text-cool-grey-600">delivered</span>
+          </div>
+          {/* Notes icon */}
+          {order.notes != "" && (
+            <div className="absolute top-2 right-3 fill-cool-grey-600">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24"
+                viewBox="0 -960 960 960"
+                width="24"
+              >
+                <path d="M120-240v-80h480v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" />
+              </svg>
+            </div>
+          )}
+        </div>
+      </HoverCardTrigger>
+      {order.notes != "" && (
+        <HoverCardContent className="w-80 bg-cool-grey-50">
+          <div className="flex justify-between space-x-4">
+            <div className="space-y-1">
+              <p className="text-sm whitespace-pre-line">{order.notes}</p>
+            </div>
+          </div>
+        </HoverCardContent>
+      )}
+    </HoverCard>
   );
 }
 
