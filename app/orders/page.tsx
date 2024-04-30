@@ -9,6 +9,9 @@ import {
   deleteOrder,
   editOrder,
   getLoginInfo,
+  createCompany,
+  editCompany,
+  deleteCompany,
 } from "./interface/interface.js";
 
 import { useEffect, useState, useMemo, useContext, createContext } from "react";
@@ -33,6 +36,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -109,11 +121,27 @@ export default function Orders() {
     active: 0,
   });
 
+  const [orders, setOrders] = useState<OrderType[]>([]);
+  const [companies, setCompanies] = useState<CompanyType[]>([]);
+
+  function reload() {
+    getOrders({ setOrders });
+    getCompanies({ setCompanies });
+  }
+
+  useEffect(() => {
+    reload();
+  }, []);
+
   return (
-    <UserContext.Provider value={{ user: user, setUser: setUser }}>
-      <Menu />
-      <OrderList />
-    </UserContext.Provider>
+    <DataContext.Provider value={{ orders, companies }}>
+      <ReloadContext.Provider value={reload}>
+        <UserContext.Provider value={{ user: user, setUser: setUser }}>
+          <Menu />
+          <OrderList />
+        </UserContext.Provider>
+      </ReloadContext.Provider>
+    </DataContext.Provider>
   );
 }
 
@@ -122,6 +150,8 @@ function Menu() {
   const { user, setUser } = useContext(UserContext);
   const [openPopup, setOpenPopup] = useState(false);
   const [invalidLogin, setInvalidLogin] = useState(false);
+
+  const [createCompanyOpen, setCreateCompanyOpen] = useState(false);
 
   const formSchema = z.object({
     password: z.string(),
@@ -212,52 +242,55 @@ function Menu() {
               </DialogContent>
             </Dialog>
           ) : (
-            <span
-              className="absolute mt-1 mr-6 font-semibold transition-colors cursor-pointer right-1 top-4 hover:text-cool-grey-900 text-cool-grey-500"
-              onClick={() =>
-                setUser({ id: 0, name: "", password: "", active: 0 })
-              }
-            >
-              Log out
-            </span>
+            <div>
+              <DropdownMenu>
+                <DropdownMenuTrigger className="absolute mt-1 mr-6 font-semibold transition-colors cursor-pointer right-1 top-4 hover:text-cool-grey-900 text-cool-grey-500">
+                  Menu
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      setUser({ id: 0, name: "", password: "", active: 0 })
+                    }
+                  >
+                    Log Out
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setCreateCompanyOpen(true)}>
+                    Create Company
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           )}
         </div>
+        <CreateCompanyForm
+          isOpen={createCompanyOpen}
+          setOpen={setCreateCompanyOpen}
+        />
       </div>
     </>
   );
 }
 
 function OrderList() {
-  const [orders, setOrders] = useState<OrderType[]>([]);
-  const [companies, setCompanies] = useState<CompanyType[]>([]);
-
-  function reload() {
-    getOrders({ setOrders });
-    getCompanies({ setCompanies });
-  }
-
-  useEffect(() => {
-    reload();
-  }, []);
+  const reload = useContext(ReloadContext);
+  const { user, setUser } = useContext(UserContext);
+  const { companies, orders }: any = useContext(DataContext);
 
   return (
-    <DataContext.Provider value={{ orders, companies }}>
-      <ReloadContext.Provider value={reload}>
-        <div className="mt-6 mb-6 max-w-[1280px] mx-auto flex gap-x-6 gap-y-4 flex-wrap justify-center">
-          {companies.map((company) => {
-            return (
-              <Company
-                company={company}
-                orders={orders.filter((order) => {
-                  return order.company == company.id;
-                })}
-                key={company.id}
-              />
-            );
-          })}
-        </div>
-      </ReloadContext.Provider>
-    </DataContext.Provider>
+    <div className="mt-6 mb-6 max-w-[1280px] mx-auto flex gap-x-6 gap-y-4 flex-wrap justify-center">
+      {companies.map((company: CompanyType) => {
+        return (
+          <Company
+            company={company}
+            orders={orders.filter((order: OrderType) => {
+              return order.company == company.id;
+            })}
+            key={company.id}
+          />
+        );
+      })}
+    </div>
   );
 }
 
@@ -269,6 +302,8 @@ function Company({
   orders: OrderType[];
 }) {
   const { user, setUser } = useContext(UserContext);
+
+  const [editCompanyOpen, setEditCompanyOpen] = useState(false);
 
   let sortedOrders = useMemo(() => {
     return orders.sort((a: OrderType, b: OrderType) => {
@@ -282,28 +317,53 @@ function Company({
   }, [orders]);
 
   return (
-    <div className="w-13 h-fit font-inter">
-      {/* Logo & button */}
-      <div className="relative mb-4 h-fit">
-        <div className="h-[48px]">
-          {company.image != "" ? (
-            <img
-              src={`${company.image}`}
-              className="absolute bottom-0 h-[32px]"
-              alt={company.name}
-            />
-          ) : (
-            <h3 className="absolute bottom-0 text-2xl font-semibold align-bottom">
-              {company.name}
-            </h3>
-          )}
-          {user.active == 1 && <CreateOrderForm company={company} />}
+    <>
+      {orders.length > 0 || user.active ? (
+        <div className="w-13 h-fit font-inter">
+          {/* Logo & button */}
+          <div className="relative mb-4 h-fit">
+            <div className="h-[48px]">
+              {company.image != "" ? (
+                <img
+                  src={`${company.image}`}
+                  className={`absolute bottom-0 h-[32px] ${
+                    user.active && "cursor-pointer"
+                  }`}
+                  alt={company.name}
+                  onClick={() => {
+                    if (user.active) setEditCompanyOpen(true);
+                  }}
+                />
+              ) : (
+                <h3
+                  className={`absolute bottom-0 text-2xl font-semibold align-bottom ${
+                    user.active && "cursor-pointer"
+                  }`}
+                  onClick={() => {
+                    if (user.active) setEditCompanyOpen(true);
+                  }}
+                >
+                  {company.name}
+                </h3>
+              )}
+              {user.active == 1 && <CreateOrderForm company={company} />}
+            </div>
+          </div>
+          {sortedOrders.map((order) => {
+            return (
+              <Order company={company} order={order} key={order.order_id} />
+            );
+          })}
+          <EditCompanyForm
+            company={company}
+            isOpen={editCompanyOpen}
+            setOpen={setEditCompanyOpen}
+          />
         </div>
-      </div>
-      {sortedOrders.map((order) => {
-        return <Order company={company} order={order} key={order.order_id} />;
-      })}
-    </div>
+      ) : (
+        <></>
+      )}
+    </>
   );
 }
 
@@ -959,6 +1019,250 @@ function CreateOrderForm({ company }: { company: CompanyType }) {
               />
             </div>
             <DialogFooter className="gap-2">
+              <Button type="submit">Save</Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function CreateCompanyForm({
+  isOpen,
+  setOpen,
+}: {
+  isOpen: boolean;
+  setOpen: (open: boolean) => void;
+}) {
+  const reload = useContext(ReloadContext);
+  const { user, setUser } = useContext(UserContext);
+  const { companies, orders } = useContext(DataContext);
+
+  const formSchema = z.object({
+    name: z.string().min(1, {
+      message: "Name is required",
+    }),
+    logo: z.optional(z.string()),
+  });
+
+  type FormType = z.infer<typeof formSchema>;
+
+  const form = useForm<FormType>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      logo: "",
+    },
+  });
+
+  useEffect(() => {
+    form.reset();
+  }, [isOpen]);
+
+  const onSubmit = async (data: FormType) => {
+    let maxPriority = 1;
+
+    for (let i = 0; i < companies.length; i++) {
+      if (companies[i].priority > maxPriority)
+        maxPriority = companies[i].priority;
+    }
+
+    let company = {
+      name: data.name,
+      image: data.logo,
+      priority: maxPriority + 1,
+    };
+
+    await createCompany({ company, user });
+    setOpen(false);
+    reload();
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setOpen}>
+      <DialogTrigger asChild></DialogTrigger>
+      <DialogContent className="sm:max-w-[425px] bg-white">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <DialogHeader>
+              <DialogTitle>Create company</DialogTitle>
+              <DialogDescription>
+                Create a company to add to the page
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid grid-cols-4 gap-4 py-4">
+              {/* NAME */}
+              <FormField
+                name="name"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem className="col-span-4">
+                    <FormLabel htmlFor="name" className="text-left">
+                      Name <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <div>
+                        <Input
+                          {...form.register("name")}
+                          onFocus={(e) => e.target.select()}
+                          placeholder="Evnroll"
+                        />
+                        <FormMessage className="mt-2" />
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              {/* NAME */}
+              <FormField
+                name="logo"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem className="col-span-4">
+                    <FormLabel htmlFor="logo" className="text-left">
+                      Logo (Optional)
+                    </FormLabel>
+                    <FormControl>
+                      <div>
+                        <Input
+                          {...form.register("logo")}
+                          onFocus={(e) => e.target.select()}
+                          placeholder="https://i.imgur.com/dnIig58.png"
+                        />
+                        <FormMessage className="mt-2" />
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+            <DialogFooter className="gap-2">
+              <Button type="submit">Save</Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function EditCompanyForm({
+  company,
+  isOpen,
+  setOpen,
+}: {
+  company: CompanyType;
+  isOpen: boolean;
+  setOpen: (open: boolean) => void;
+}) {
+  const reload = useContext(ReloadContext);
+  const { user, setUser } = useContext(UserContext);
+  const { companies }: any = useContext(DataContext);
+
+  const formSchema = z.object({
+    name: z.string().min(1, {
+      message: "Name is required",
+    }),
+    logo: z.optional(z.string()),
+  });
+
+  type FormType = z.infer<typeof formSchema>;
+
+  const form = useForm<FormType>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: company.name,
+      logo: company.image,
+    },
+  });
+
+  const onSubmit = async (data: FormType) => {
+    let newCompany = {
+      name: data.name,
+      image: data.logo,
+      priority: company.priority,
+      id: company.id,
+    };
+
+    await editCompany({ company: newCompany, user });
+    setOpen(false);
+    reload();
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setOpen}>
+      <DialogTrigger asChild></DialogTrigger>
+      <DialogContent className="sm:max-w-[425px] bg-white">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <DialogHeader>
+              <DialogTitle>Edit company</DialogTitle>
+              <DialogDescription>Edit a company's details</DialogDescription>
+            </DialogHeader>
+            <div className="grid grid-cols-4 gap-4 py-4">
+              {/* NAME */}
+              <FormField
+                name="name"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem className="col-span-4">
+                    <FormLabel htmlFor="name" className="text-left">
+                      Name <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <div>
+                        <Input
+                          {...form.register("name")}
+                          onFocus={(e) => e.target.select()}
+                          placeholder="Evnroll"
+                        />
+                        <FormMessage className="mt-2" />
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              {/* NAME */}
+              <FormField
+                name="logo"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem className="col-span-4">
+                    <FormLabel htmlFor="logo" className="text-left">
+                      Logo (Optional)
+                    </FormLabel>
+                    <FormControl>
+                      <div>
+                        <Input
+                          {...form.register("logo")}
+                          onFocus={(e) => e.target.select()}
+                          placeholder="https://i.imgur.com/dnIig58.png"
+                        />
+                        <FormMessage className="mt-2" />
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+            <DialogFooter className="gap-2">
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={async () => {
+                  await deleteCompany({
+                    company,
+                    user,
+                  });
+                  setOpen(false);
+                  reload();
+                }}
+              >
+                Delete
+              </Button>
               <Button type="submit">Save</Button>
             </DialogFooter>
           </form>
