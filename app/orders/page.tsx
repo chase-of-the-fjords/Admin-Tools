@@ -8,6 +8,7 @@ import {
   createOrder,
   deleteOrder,
   editOrder,
+  getLoginInfo,
 } from "./interface/interface.js";
 
 import { useEffect, useState, useMemo, useContext, createContext } from "react";
@@ -47,21 +48,25 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
+import { invalid } from "moment";
 
 const ReloadContext = createContext<Function>(() => {});
 const DataContext = createContext<{
   companies: CompanyType[];
   orders: OrderType[];
 }>({ companies: [], orders: [] });
+const UserContext = createContext<{ user: UserType; setUser: Function }>({
+  user: {
+    name: "",
+    id: 0,
+    password: "",
+    active: 0,
+  },
+  setUser: () => {},
+});
 
 type CompanyType = {
   id: number;
@@ -84,25 +89,133 @@ type OrderType = {
   id: string;
 };
 
+type UserType = {
+  id: number;
+  name: string;
+  password: string;
+  active: number;
+};
+
 export default function Orders() {
+  const [user, setUser] = useState<UserType>({
+    name: "",
+    id: 0,
+    password: "",
+    active: 0,
+  });
+
   return (
-    <>
+    <UserContext.Provider value={{ user: user, setUser: setUser }}>
       <Menu />
       <OrderList />
-    </>
+    </UserContext.Provider>
   );
 }
 
 // The menu bar component.
 function Menu() {
+  const { user, setUser } = useContext(UserContext);
+  const [openPopup, setOpenPopup] = useState(false);
+  const [invalidLogin, setInvalidLogin] = useState(false);
+
+  const formSchema = z.object({
+    password: z.string(),
+  });
+
+  type FormType = z.infer<typeof formSchema>;
+
+  const form = useForm<FormType>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      password: "",
+    },
+  });
+
+  useEffect(() => {
+    form.reset();
+    setInvalidLogin(false);
+  }, [openPopup]);
+
+  const onSubmit = async (data: FormType) => {
+    let newUser: UserType = await getLoginInfo({
+      user: { password: data.password },
+      setUser,
+    });
+    if (newUser.active == 1) {
+      setOpenPopup(false);
+      setInvalidLogin(false);
+    } else {
+      setInvalidLogin(true);
+    }
+  };
+
   return (
     <>
       <div className="invisible h-8 font-RobotoMono" />
       <div className="fixed top-0 z-10 w-screen h-8 m-auto shadow-xl bg-cool-grey-50">
-        <div className="mx-auto w-fit">
-          <Link href="./">
-            <img src="./inverted-logo.png" className="pr-3 mx-auto mt-2 h-7" />
+        <div className="relative max-w-[1000px] mx-auto">
+          <Link href="./" className="absolute">
+            <img src="./inverted-logo.png" className="mt-2 ml-4 h-7" />
           </Link>
+          {user.active == 1 && (
+            <div className="absolute w-full mt-1 text-lg font-semibold text-center top-4">{`${user.name} is currently editing`}</div>
+          )}
+          {user.active == 0 ? (
+            <Dialog open={openPopup} onOpenChange={setOpenPopup}>
+              <DialogTrigger asChild>
+                <span className="absolute mt-1 mr-6 font-semibold transition-colors cursor-pointer right-1 top-4 hover:text-cool-grey-900 text-cool-grey-500">
+                  Log in
+                </span>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px] bg-white">
+                <DialogHeader>
+                  <DialogTitle>Log in</DialogTitle>
+                </DialogHeader>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)}>
+                    {/* PASSWORD */}
+                    <FormField
+                      name="password"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel htmlFor="password" className="text-left">
+                            Password <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <div>
+                              <Input
+                                {...form.register("password")}
+                                placeholder="abc123"
+                                type="password"
+                                onFocus={(e) => e.target.select()}
+                                autoComplete="new-password"
+                              />
+                              <FormMessage className="mt-2">
+                                {invalidLogin && "Invalid login"}
+                              </FormMessage>
+                            </div>
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <DialogFooter className="mt-4">
+                      <Button type="submit">Submit</Button>
+                    </DialogFooter>
+                  </form>
+                </Form>
+              </DialogContent>
+            </Dialog>
+          ) : (
+            <span
+              className="absolute mt-1 mr-6 font-semibold transition-colors cursor-pointer right-1 top-4 hover:text-cool-grey-900 text-cool-grey-500"
+              onClick={() =>
+                setUser({ id: 0, name: "", password: "", active: 0 })
+              }
+            >
+              Log out
+            </span>
+          )}
         </div>
       </div>
     </>
@@ -150,6 +263,8 @@ function Company({
   company: CompanyType;
   orders: OrderType[];
 }) {
+  const { user, setUser } = useContext(UserContext);
+
   let [fileExists, setFileExists] = useState(true);
 
   let sortedOrders = useMemo(() => {
@@ -182,7 +297,7 @@ function Company({
               {company.name}
             </h3>
           )}
-          <CreateOrderForm company={company} />
+          {user.active == 1 && <CreateOrderForm company={company} />}
         </div>
       </div>
       {sortedOrders.map((order) => {
@@ -194,6 +309,7 @@ function Company({
 
 function Order({ company, order }: { company: CompanyType; order: OrderType }) {
   const reload = useContext(ReloadContext);
+  const { user, setUser } = useContext(UserContext);
   const { companies }: any = useContext(DataContext);
 
   const [openPopup, setOpenPopup] = useState(false);
@@ -261,7 +377,7 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
       order_id: order.order_id,
     };
 
-    await editOrder({ order: editedOrder });
+    await editOrder({ order: editedOrder, user });
     setOpenPopup(false);
     reload();
   };
@@ -271,7 +387,7 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
   if (order.priority == 1) priorityStyle = "border-l-blue-500";
   else if (order.priority == 2) priorityStyle = "border-l-red-500";
 
-  return (
+  return user.active == 1 ? (
     <Dialog open={openPopup} onOpenChange={setOpenPopup}>
       <DialogTrigger asChild>
         <div
@@ -496,7 +612,10 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
                 type="button"
                 variant="destructive"
                 onClick={async () => {
-                  await deleteOrder({ order: { order_id: order.order_id } });
+                  await deleteOrder({
+                    order: { order_id: order.order_id },
+                    user: user,
+                  });
                   setOpenPopup(false);
                   reload();
                 }}
@@ -509,11 +628,38 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
         </Form>
       </DialogContent>
     </Dialog>
+  ) : (
+    <div
+      className={`${priorityStyle} relative mb-4 w-13 h-[80px] bg-cool-grey-50 rounded-md border-l-8 shadow-md transition-all cursor-pointer hover:shadow-lg hover:-translate-y-1`}
+    >
+      {/* Name and number */}
+      <div className="absolute align-top top-3 left-3">
+        <span className="text-xl font-semibold">{order.name} </span>
+        {order.id != "" && (
+          <span className="text-md text-cool-grey-600">#{order.id}</span>
+        )}
+      </div>
+      {/* Quantity open */}
+      <div className="absolute align-bottom bottom-3 left-3">
+        <span className="text-xl font-semibold">
+          {order.quantity - order.completed}{" "}
+        </span>
+        <span className="text-md text-cool-grey-600">open</span>
+      </div>
+      {/* Right side */}
+      <div className="absolute pb-[1px] align-bottom bottom-3 right-3">
+        <span className="text-md">
+          {order.completed}/{order.quantity}{" "}
+        </span>
+        <span className="text-sm text-cool-grey-600">delivered</span>
+      </div>
+    </div>
   );
 }
 
 function CreateOrderForm({ company }: { company: CompanyType }) {
   const reload = useContext(ReloadContext);
+  const { user, setUser } = useContext(UserContext);
   const { companies }: any = useContext(DataContext);
 
   const [openPopup, setOpenPopup] = useState(false);
@@ -578,7 +724,7 @@ function CreateOrderForm({ company }: { company: CompanyType }) {
       id: data.id,
     };
 
-    await createOrder({ order });
+    await createOrder({ order, user });
     setOpenPopup(false);
     reload();
   };

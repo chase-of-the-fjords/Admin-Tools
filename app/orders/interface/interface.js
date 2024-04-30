@@ -26,7 +26,7 @@ export async function getOrders({ setOrders }) {
 /**
  * Creates a new order given an order object.
  */
-export async function createOrder({ order }) {
+export async function createOrder({ order, user }) {
   // The data being passed into the API.
   const postData = {
     method: "POST",
@@ -34,7 +34,7 @@ export async function createOrder({ order }) {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
     },
-    body: JSON.stringify({ order }),
+    body: JSON.stringify({ order, user }),
   };
 
   // Accesses the orders API.
@@ -44,7 +44,7 @@ export async function createOrder({ order }) {
 /**
  * Edits an existing order given an order object.
  */
-export async function editOrder({ order }) {
+export async function editOrder({ order, user }) {
   // The data being passed into the API.
   const postData = {
     method: "PATCH",
@@ -52,7 +52,7 @@ export async function editOrder({ order }) {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
     },
-    body: JSON.stringify({ order }),
+    body: JSON.stringify({ order, user }),
   };
 
   // Accesses the orders API.
@@ -62,7 +62,7 @@ export async function editOrder({ order }) {
 /**
  * Gets orders from the SQL database and stores them in the orders hook.
  */
-export async function deleteOrder({ order }) {
+export async function deleteOrder({ order, user }) {
   // The data being passed into the API.
   const postData = {
     method: "DELETE",
@@ -70,7 +70,7 @@ export async function deleteOrder({ order }) {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
     },
-    body: JSON.stringify({ order }),
+    body: JSON.stringify({ order, user }),
   };
 
   // Accesses the orders API.
@@ -100,6 +100,33 @@ export async function getCompanies({ setCompanies }) {
     const response = await res.json();
 
     setCompanies(response);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+export async function getLoginInfo({ user, setUser }) {
+  // The data being passed into the API.
+  const postData = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    },
+  };
+
+  // Gets the data.
+  try {
+    // Accesses the companies API.
+    const res = await fetch(
+      `${window.location.origin}/api/user/${user.password}`,
+      postData
+    );
+    const response = await res.json();
+
+    setUser(response);
+
+    return response;
   } catch (e) {
     console.error(e);
   }

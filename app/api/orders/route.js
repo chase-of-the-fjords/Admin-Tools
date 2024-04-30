@@ -9,6 +9,17 @@ export async function POST(request) {
   let body = await request.json();
 
   // The request:
+  const users = await query({
+    // The SQL query:
+    query: `SELECT * FROM users WHERE password = ${JSON.stringify(
+      body.user.password
+    )}`,
+    values: [],
+  });
+
+  if (users.length == 0 || users[0].active != 1) return new Response(null);
+
+  // The request:
   const order = await query({
     // The SQL query:
     query: `INSERT INTO orders (name, company, quantity, completed, priority, notes, start, id) 
@@ -32,6 +43,17 @@ export async function POST(request) {
 export async function PATCH(request) {
   // Gets the body of the request which contains a 'machine' object
   let body = await request.json();
+
+  // The request:
+  const users = await query({
+    // The SQL query:
+    query: `SELECT * FROM users WHERE password = ${JSON.stringify(
+      body.user.password
+    )}`,
+    values: [],
+  });
+
+  if (users.length == 0 || users[0].active != 1) return new Response(null);
 
   // The request:
   const order = await query({
@@ -69,6 +91,17 @@ export async function GET(request) {
 export async function DELETE(request) {
   // Gets the body of the request which contains a 'machine' object
   let body = await request.json();
+
+  // The request:
+  const users = await query({
+    // The SQL query:
+    query: `SELECT * FROM users WHERE password = ${JSON.stringify(
+      body.user.password
+    )}`,
+    values: [],
+  });
+
+  if (users.length == 0 || users[0].active != 1) return new Response(null);
 
   // The request:
   const order = await query({
