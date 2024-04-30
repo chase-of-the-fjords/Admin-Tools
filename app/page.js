@@ -44,6 +44,11 @@ function App() {
             description="Shows the state of the machine shop at any given point in time."
             link="http://shop.origingolf.com/moment"
           />
+          <Card
+            text="View Orders"
+            description="View all active orders in the shop and their information."
+            link="./orders"
+          />
         </div>
       </div>
 

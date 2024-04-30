@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+
 module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -71,9 +72,10 @@ module.exports = {
       },
       fontFamily: {
         Courier: ["courier-std", "monospace"],
-        inter: ["var(--font-Inter)"],
+        inter: ["var(--font-inter)"],
+        RobotoMono: ["var(--font-roboto-mono)"],
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 };
