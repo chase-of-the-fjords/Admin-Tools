@@ -158,7 +158,7 @@ function Menu() {
             <img src="./inverted-logo.png" className="mt-2 ml-4 h-7" />
           </Link>
           {user.active == 1 && (
-            <div className="absolute w-full mt-1 text-lg font-semibold text-center top-4">{`${user.name} is currently editing`}</div>
+            <div className="absolute invisible w-full mt-1 text-lg font-semibold text-center sm:visible top-4">{`${user.name} is currently editing`}</div>
           )}
           {user.active == 0 ? (
             <Dialog open={openPopup} onOpenChange={setOpenPopup}>
