@@ -278,7 +278,7 @@ function OrderList() {
   const { companies, orders }: any = useContext(DataContext);
 
   return (
-    <div className="mt-6 mb-6 max-w-[1280px] mx-auto flex gap-x-6 gap-y-4 flex-wrap justify-center">
+    <div className="flex flex-wrap justify-center px-2 mx-auto mt-6 mb-6 gap-x-6 gap-y-4">
       {companies.map((company: CompanyType) => {
         return (
           <Company
