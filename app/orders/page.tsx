@@ -154,6 +154,7 @@ export default function Orders() {
 // The menu bar component.
 function Menu() {
   const { user, setUser } = useContext(UserContext);
+  const { orders } = useContext(DataContext);
   const [openPopup, setOpenPopup] = useState(false);
   const [invalidLogin, setInvalidLogin] = useState(false);
 
@@ -190,13 +191,23 @@ function Menu() {
     }
   };
 
+  const totalOpenOrders = useMemo(() => {
+    let total = 0;
+    orders.forEach((order) => {
+      total += order.quantity - order.completed;
+    });
+    return total;
+  }, [orders]);
+
   return (
     <>
       <div className="invisible h-8 font-RobotoMono" />
       <div className="fixed top-0 z-10 w-screen h-8 m-auto shadow-xl bg-cool-grey-50">
         <div className="relative max-w-[1000px] mx-auto">
-          {user.active == 1 && (
+          {user.active == 1 ? (
             <div className="absolute invisible w-full mx-auto mt-1 text-lg font-semibold text-center sm:visible top-4">{`${user.name} is currently editing`}</div>
+          ) : (
+            <div className="absolute invisible w-full mx-auto mt-1 text-lg font-semibold text-center sm:visible top-4">{`${totalOpenOrders} open orders`}</div>
           )}
           <Link href="./" className="absolute">
             <img src="./inverted-logo.png" className="mt-2 ml-4 h-7" />
@@ -311,7 +322,7 @@ function Company({
 
   const [editCompanyOpen, setEditCompanyOpen] = useState(false);
 
-  let sortedOrders = useMemo(() => {
+  const sortedOrders = useMemo(() => {
     return orders.sort((a: OrderType, b: OrderType) => {
       if (a.priority > b.priority) return -1;
       else if (a.priority < b.priority) return 1;
@@ -320,6 +331,14 @@ function Company({
       else if (a.name < b.name) return -1;
       else return 1;
     });
+  }, [orders]);
+
+  const totalOpenOrders = useMemo(() => {
+    let total = 0;
+    orders.forEach((order) => {
+      total += order.quantity - order.completed;
+    });
+    return total;
   }, [orders]);
 
   return (
@@ -360,6 +379,9 @@ function Company({
               <Order company={company} order={order} key={order.order_id} />
             );
           })}
+          <div className="text-xl font-semibold text-center">
+            {totalOpenOrders} open orders
+          </div>
           <EditCompanyForm
             company={company}
             isOpen={editCompanyOpen}
