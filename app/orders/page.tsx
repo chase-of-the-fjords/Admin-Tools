@@ -70,6 +70,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 
+import { compile, evaluate } from "mathjs";
+
 const ReloadContext = createContext<Function>(() => {});
 const DataContext = createContext<{
   companies: CompanyType[];
@@ -420,12 +422,22 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
       message: "Minimum 2 characters",
     }),
     id: z.optional(z.string()),
-    completed: z
-      .number({ message: "Value is required" })
-      .min(0, { message: "Value cannot be negative" }),
-    total: z
-      .number({ message: "Value is required" })
-      .min(0, { message: "Value cannot be negative" }),
+    completed: z.preprocess((a) => {
+      try {
+        if (typeof a == "number") return a;
+        return evaluate(z.string().parse(a));
+      } catch (e) {
+        return undefined;
+      }
+    }, z.number({ message: "Number is required" }).min(0, { message: "Value cannot be negative" })),
+    total: z.preprocess((a) => {
+      try {
+        if (typeof a == "number") return a;
+        return evaluate(z.string().parse(a));
+      } catch (e) {
+        return undefined;
+      }
+    }, z.number({ message: "Number is required" }).min(0, { message: "Value cannot be negative" })),
     priority: z.optional(
       z.enum(["Low", "Medium", "High"], {
         invalid_type_error: "Invalid input",
@@ -464,6 +476,8 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
       id: data.id,
       order_id: order.order_id,
     };
+
+    console.log(data.completed);
 
     await editOrder({ order: editedOrder, user });
     setOpenPopup(false);
@@ -594,9 +608,9 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
                       <div>
                         <Input
                           {...form.register("completed", {
-                            valueAsNumber: true,
+                            required: true,
                           })}
-                          type="number"
+                          type="text"
                           onFocus={(e) => e.target.select()}
                         />
                         <FormMessage className="mt-2" />
@@ -619,11 +633,10 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
                       <div>
                         <Input
                           {...form.register("total", {
-                            valueAsNumber: true,
                             required: true,
                           })}
+                          type="text"
                           placeholder="2000"
-                          type="number"
                           onFocus={(e) => e.target.select()}
                         />
                         <FormMessage className="mt-2" />
@@ -800,12 +813,22 @@ function CreateOrderForm({ company }: { company: CompanyType }) {
       message: "Minimum 2 characters",
     }),
     id: z.optional(z.string()),
-    completed: z
-      .number({ message: "Value is required" })
-      .min(0, { message: "Value cannot be negative" }),
-    total: z
-      .number({ message: "Value is required" })
-      .min(0, { message: "Value cannot be negative" }),
+    completed: z.preprocess((a) => {
+      try {
+        if (typeof a == "number") return a;
+        return evaluate(z.string().parse(a));
+      } catch (e) {
+        return undefined;
+      }
+    }, z.number({ message: "Number is required" }).min(0, { message: "Value cannot be negative" })),
+    total: z.preprocess((a) => {
+      try {
+        if (typeof a == "number") return a;
+        return evaluate(z.string().parse(a));
+      } catch (e) {
+        return undefined;
+      }
+    }, z.number({ message: "Number is required" }).min(0, { message: "Value cannot be negative" })),
     priority: z.optional(
       z.enum(["Low", "Medium", "High"], {
         invalid_type_error: "Invalid input",
@@ -939,9 +962,8 @@ function CreateOrderForm({ company }: { company: CompanyType }) {
                       <div>
                         <Input
                           {...form.register("completed", {
-                            valueAsNumber: true,
+                            required: true,
                           })}
-                          type="number"
                           onFocus={(e) => e.target.select()}
                         />
                         <FormMessage className="mt-2" />
@@ -964,11 +986,9 @@ function CreateOrderForm({ company }: { company: CompanyType }) {
                       <div>
                         <Input
                           {...form.register("total", {
-                            valueAsNumber: true,
                             required: true,
                           })}
                           placeholder="2000"
-                          type="number"
                           onFocus={(e) => e.target.select()}
                         />
                         <FormMessage className="mt-2" />
