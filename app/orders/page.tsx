@@ -126,9 +126,9 @@ export default function Orders() {
   const [orders, setOrders] = useState<OrderType[]>([]);
   const [companies, setCompanies] = useState<CompanyType[]>([]);
 
-  function reload() {
-    getOrders({ setOrders });
-    getCompanies({ setCompanies });
+  async function reload() {
+    await getOrders({ setOrders });
+    await getCompanies({ setCompanies });
   }
 
   useEffect(() => {
@@ -412,9 +412,11 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
 
   type PriorityEnum = "Low" | "Medium" | "High";
 
-  let defaultPriority: PriorityEnum = "Medium";
-  if (order.priority == 0) defaultPriority = "Low";
-  else if (order.priority == 2) defaultPriority = "High";
+  let defaultPriority: PriorityEnum = useMemo(() => {
+    if (order.priority == 0) return "Low";
+    else if (order.priority == 2) return "High";
+    else return "Medium";
+  }, [order]);
 
   const formSchema = z.object({
     company: CompanyEnum,
@@ -450,15 +452,17 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
 
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      company: company.name,
-      name: order.name,
-      id: order.id,
-      completed: order.completed,
-      total: order.quantity,
-      priority: defaultPriority,
-      notes: order.notes,
-    },
+    defaultValues: useMemo(() => {
+      return {
+        company: company.name,
+        name: order.name,
+        id: order.id,
+        completed: order.completed,
+        total: order.quantity,
+        priority: defaultPriority,
+        notes: order.notes,
+      };
+    }, [company, order]),
   });
 
   const onSubmit = async (data: FormType) => {
@@ -477,17 +481,28 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
       order_id: order.order_id,
     };
 
-    console.log(data.completed);
-
     await editOrder({ order: editedOrder, user });
     setOpenPopup(false);
-    reload();
+    await reload();
   };
 
   let priorityStyle = "border-l-yellow-500";
 
   if (order.priority == 1) priorityStyle = "border-l-blue-500";
   else if (order.priority == 2) priorityStyle = "border-l-red-500";
+
+  useEffect(() => {
+    if (openPopup)
+      form.reset({
+        company: company.name,
+        name: order.name,
+        id: order.id,
+        completed: order.completed,
+        total: order.quantity,
+        priority: defaultPriority,
+        notes: order.notes,
+      });
+  }, [openPopup]);
 
   return user.active == 1 ? (
     <Dialog open={openPopup} onOpenChange={setOpenPopup}>
@@ -841,15 +856,17 @@ function CreateOrderForm({ company }: { company: CompanyType }) {
 
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      company: company.name,
-      name: undefined,
-      id: undefined,
-      completed: 0,
-      total: undefined,
-      priority: undefined,
-      notes: undefined,
-    },
+    defaultValues: useMemo(() => {
+      return {
+        company: company.name,
+        name: undefined,
+        id: undefined,
+        completed: 0,
+        total: undefined,
+        priority: undefined,
+        notes: undefined,
+      };
+    }, [company]),
   });
 
   useEffect(() => {
