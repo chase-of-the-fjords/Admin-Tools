@@ -326,9 +326,9 @@ function Company({
     return orders.sort((a: OrderType, b: OrderType) => {
       if (a.priority > b.priority) return -1;
       else if (a.priority < b.priority) return 1;
-      else if (a.quantity > b.quantity) return -1;
-      else if (a.quantity < b.quantity) return 1;
       else if (a.name < b.name) return -1;
+      else if (a.name > b.name) return 1;
+      else if (a.quantity > b.quantity) return -1;
       else return 1;
     });
   }, [orders]);
