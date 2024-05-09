@@ -70,6 +70,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 
+import { compile, evaluate } from "mathjs";
+
 const ReloadContext = createContext<Function>(() => {});
 const DataContext = createContext<{
   companies: CompanyType[];
@@ -124,9 +126,9 @@ export default function Orders() {
   const [orders, setOrders] = useState<OrderType[]>([]);
   const [companies, setCompanies] = useState<CompanyType[]>([]);
 
-  function reload() {
-    getOrders({ setOrders });
-    getCompanies({ setCompanies });
+  async function reload() {
+    await getOrders({ setOrders });
+    await getCompanies({ setCompanies });
   }
 
   useEffect(() => {
@@ -410,9 +412,11 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
 
   type PriorityEnum = "Low" | "Medium" | "High";
 
-  let defaultPriority: PriorityEnum = "Medium";
-  if (order.priority == 0) defaultPriority = "Low";
-  else if (order.priority == 2) defaultPriority = "High";
+  let defaultPriority: PriorityEnum = useMemo(() => {
+    if (order.priority == 0) return "Low";
+    else if (order.priority == 2) return "High";
+    else return "Medium";
+  }, [order]);
 
   const formSchema = z.object({
     company: CompanyEnum,
@@ -420,12 +424,22 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
       message: "Minimum 2 characters",
     }),
     id: z.optional(z.string()),
-    completed: z
-      .number({ message: "Value is required" })
-      .min(0, { message: "Value cannot be negative" }),
-    total: z
-      .number({ message: "Value is required" })
-      .min(0, { message: "Value cannot be negative" }),
+    completed: z.preprocess((a) => {
+      try {
+        if (typeof a == "number") return a;
+        return evaluate(z.string().parse(a));
+      } catch (e) {
+        return undefined;
+      }
+    }, z.number({ message: "Number is required" }).min(0, { message: "Value cannot be negative" })),
+    total: z.preprocess((a) => {
+      try {
+        if (typeof a == "number") return a;
+        return evaluate(z.string().parse(a));
+      } catch (e) {
+        return undefined;
+      }
+    }, z.number({ message: "Number is required" }).min(0, { message: "Value cannot be negative" })),
     priority: z.optional(
       z.enum(["Low", "Medium", "High"], {
         invalid_type_error: "Invalid input",
@@ -438,15 +452,17 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
 
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      company: company.name,
-      name: order.name,
-      id: order.id,
-      completed: order.completed,
-      total: order.quantity,
-      priority: defaultPriority,
-      notes: order.notes,
-    },
+    defaultValues: useMemo(() => {
+      return {
+        company: company.name,
+        name: order.name,
+        id: order.id,
+        completed: order.completed,
+        total: order.quantity,
+        priority: defaultPriority,
+        notes: order.notes,
+      };
+    }, [company, order]),
   });
 
   const onSubmit = async (data: FormType) => {
@@ -467,13 +483,26 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
 
     await editOrder({ order: editedOrder, user });
     setOpenPopup(false);
-    reload();
+    await reload();
   };
 
   let priorityStyle = "border-l-yellow-500";
 
   if (order.priority == 1) priorityStyle = "border-l-blue-500";
   else if (order.priority == 2) priorityStyle = "border-l-red-500";
+
+  useEffect(() => {
+    if (openPopup)
+      form.reset({
+        company: company.name,
+        name: order.name,
+        id: order.id,
+        completed: order.completed,
+        total: order.quantity,
+        priority: defaultPriority,
+        notes: order.notes,
+      });
+  }, [openPopup]);
 
   return user.active == 1 ? (
     <Dialog open={openPopup} onOpenChange={setOpenPopup}>
@@ -594,9 +623,9 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
                       <div>
                         <Input
                           {...form.register("completed", {
-                            valueAsNumber: true,
+                            required: true,
                           })}
-                          type="number"
+                          type="text"
                           onFocus={(e) => e.target.select()}
                         />
                         <FormMessage className="mt-2" />
@@ -619,11 +648,10 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
                       <div>
                         <Input
                           {...form.register("total", {
-                            valueAsNumber: true,
                             required: true,
                           })}
+                          type="text"
                           placeholder="2000"
-                          type="number"
                           onFocus={(e) => e.target.select()}
                         />
                         <FormMessage className="mt-2" />
@@ -800,12 +828,22 @@ function CreateOrderForm({ company }: { company: CompanyType }) {
       message: "Minimum 2 characters",
     }),
     id: z.optional(z.string()),
-    completed: z
-      .number({ message: "Value is required" })
-      .min(0, { message: "Value cannot be negative" }),
-    total: z
-      .number({ message: "Value is required" })
-      .min(0, { message: "Value cannot be negative" }),
+    completed: z.preprocess((a) => {
+      try {
+        if (typeof a == "number") return a;
+        return evaluate(z.string().parse(a));
+      } catch (e) {
+        return undefined;
+      }
+    }, z.number({ message: "Number is required" }).min(0, { message: "Value cannot be negative" })),
+    total: z.preprocess((a) => {
+      try {
+        if (typeof a == "number") return a;
+        return evaluate(z.string().parse(a));
+      } catch (e) {
+        return undefined;
+      }
+    }, z.number({ message: "Number is required" }).min(0, { message: "Value cannot be negative" })),
     priority: z.optional(
       z.enum(["Low", "Medium", "High"], {
         invalid_type_error: "Invalid input",
@@ -818,15 +856,17 @@ function CreateOrderForm({ company }: { company: CompanyType }) {
 
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      company: company.name,
-      name: undefined,
-      id: undefined,
-      completed: 0,
-      total: undefined,
-      priority: undefined,
-      notes: undefined,
-    },
+    defaultValues: useMemo(() => {
+      return {
+        company: company.name,
+        name: undefined,
+        id: undefined,
+        completed: 0,
+        total: undefined,
+        priority: undefined,
+        notes: undefined,
+      };
+    }, [company]),
   });
 
   useEffect(() => {
@@ -939,9 +979,8 @@ function CreateOrderForm({ company }: { company: CompanyType }) {
                       <div>
                         <Input
                           {...form.register("completed", {
-                            valueAsNumber: true,
+                            required: true,
                           })}
-                          type="number"
                           onFocus={(e) => e.target.select()}
                         />
                         <FormMessage className="mt-2" />
@@ -964,11 +1003,9 @@ function CreateOrderForm({ company }: { company: CompanyType }) {
                       <div>
                         <Input
                           {...form.register("total", {
-                            valueAsNumber: true,
                             required: true,
                           })}
                           placeholder="2000"
-                          type="number"
                           onFocus={(e) => e.target.select()}
                         />
                         <FormMessage className="mt-2" />
