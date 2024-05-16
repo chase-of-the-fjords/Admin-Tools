@@ -303,7 +303,8 @@ function OrderList() {
           <Company
             company={company}
             orders={orders.filter((order: OrderType) => {
-              return order.company == company.id;
+              if (user.active) return order.company == company.id;
+              return order.company == company.id && order.end == null;
             })}
             key={company.id}
           />
@@ -326,7 +327,9 @@ function Company({
 
   const sortedOrders = useMemo(() => {
     return orders.sort((a: OrderType, b: OrderType) => {
-      if (a.priority > b.priority) return -1;
+      if (a.end == null && b.end != null) return -1;
+      else if (a.end != null && b.end == null) return 1;
+      else if (a.priority > b.priority) return -1;
       else if (a.priority < b.priority) return 1;
       else if (a.name < b.name) return -1;
       else if (a.name > b.name) return 1;
@@ -411,6 +414,10 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
   });
 
   type PriorityEnum = "Low" | "Medium" | "High";
+
+  const isOldJob = useMemo(() => {
+    return order.end != null;
+  }, [order]);
 
   let defaultPriority: PriorityEnum = useMemo(() => {
     if (order.priority == 0) return "Low";
@@ -508,7 +515,11 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
     <Dialog open={openPopup} onOpenChange={setOpenPopup}>
       <DialogTrigger asChild>
         <div
-          className={`${priorityStyle} relative mb-4 w-13 h-[80px] bg-cool-grey-50 rounded-md border-l-8 shadow-md transition-all cursor-pointer hover:shadow-lg hover:-translate-y-1`}
+          className={`${priorityStyle} relative bg-cool-grey-50 mb-4 w-13 h-[80px] rounded-md border-l-8 transition-all cursor-pointer ${
+            isOldJob
+              ? "opacity-75 shadow-inner cursor-not-allowed"
+              : "shadow-md hover:shadow-lg hover:-translate-y-1"
+          }`}
         >
           {/* Name and number */}
           <div className="absolute align-top top-3 left-3">
@@ -734,21 +745,23 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
               />
             </div>
             <DialogFooter className="gap-2">
-              <Button
-                type="button"
-                variant="destructive"
-                onClick={async () => {
-                  await deleteOrder({
-                    order: { order_id: order.order_id },
-                    user: user,
-                  });
-                  setOpenPopup(false);
-                  reload();
-                }}
-              >
-                Delete
-              </Button>
-              <Button type="submit">Save</Button>
+              {isOldJob || (
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={async () => {
+                    await deleteOrder({
+                      order: { order_id: order.order_id },
+                      user: user,
+                    });
+                    setOpenPopup(false);
+                    reload();
+                  }}
+                >
+                  Delete
+                </Button>
+              )}
+              <Button type="submit">{isOldJob ? "Restore" : "Save"}</Button>
             </DialogFooter>
           </form>
         </Form>
