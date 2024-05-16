@@ -66,7 +66,8 @@ export async function PATCH(request) {
         completed = ${body.order.completed}, 
         priority = ${body.order.priority},
         notes = ${JSON.stringify(body.order.notes)},
-        id = ${JSON.stringify(body.order.id)} 
+        id = ${JSON.stringify(body.order.id)},
+        end = NULL
       WHERE order_id=${body.order.order_id}`,
     values: [],
   });
@@ -80,7 +81,7 @@ export async function GET(request) {
   // The request:
   const orders = await query({
     // The SQL query:
-    query: `SELECT * FROM orders WHERE (end IS NULL OR end > CONVERT_TZ(UTC_TIMESTAMP(), "+00:00", "America/Los_Angeles"))`,
+    query: `SELECT * FROM orders WHERE (end IS NULL OR end > (CONVERT_TZ(UTC_TIMESTAMP(), "+00:00", "America/Los_Angeles") - INTERVAL 2 DAY))`,
     values: [],
   });
 
