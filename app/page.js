@@ -26,13 +26,8 @@ function App() {
         <div className="flex flex-wrap gap-[20px] p-[20px] rounded-lg shadow-inner bg-cool-grey-200">
           <Card
             text="Shop Display"
-            description="The main display page for the machine shop."
+            description="The main display page for the machine shop. Log in to edit."
             link="http://shop.origingolf.com"
-          />
-          <Card
-            text="Edit Shop"
-            description="The management tool for the machine shop."
-            link="http://shop.origingolf.com/edit"
           />
           <Card
             text="History Log"
