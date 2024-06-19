@@ -147,7 +147,7 @@ export default function App() {
 
       <div className="block w-full px-4 m-auto mt-4 mb-8 sm:w-fit h-fit">
         <div className="relative block w-full m-auto mt-6 h-fit">
-          <div className="relative block w-full space-y-2 xl:absolute h-fit">
+          <div className="relative block w-full space-y-2 min-[360px]:space-y-0 xl:absolute h-fit">
             <input
               type="file"
               className="w-12 mr-4 transition-colors file:w-9 file:cursor-pointer file:border-none file:h-6 file:rounded file:shadow-md file file:bg-cyan-700 file:hover:bg-cyan-800 file:text-cyan-50 file:hover:text-cyan-100"
@@ -155,7 +155,7 @@ export default function App() {
               onInput={(e) => getInputData(e)}
             />
             <button
-              className="block h-6 transition-colors rounded shadow-md sm:inline-block sm:absolute sm:right-0 w-9 bg-cyan-700 hover:bg-cyan-800 text-cyan-50 hover:text-cyan-100"
+              className="block h-6 transition-colors rounded shadow-md min-[360px]:inline-block min-[360px]:absolute min-[360px]:right-0 w-9 bg-cyan-700 hover:bg-cyan-800 text-cyan-50 hover:text-cyan-100"
               onClick={() => {
                 saveFile(new Blob([output], { type: "text/plain" }), fileName);
               }}
