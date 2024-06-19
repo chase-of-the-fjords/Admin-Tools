@@ -201,30 +201,9 @@ export default function App() {
   return (
     <>
       {/* HEADER */}
-      <div className="fixed top-0 w-screen m-auto shadow-xl h-7 bg-cool-grey-50">
-        <h1 className="absolute w-full text-xl font-semibold text-center sm:text-2xl bottom-3 sm:bottom-2 text-cool-grey-900">
-          Timeclock Tool
-        </h1>
-        {/* <Link className="absolute cursor-pointer text-cool-grey-500 hover:text-cool-grey-700 bottom-3 sm:bottom-2 left-3" href="./">Home</Link> */}
-        <Link href="./" className="absolute top-3 sm:top-2 left-3 sm:left-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            className="w-5 sm:w-6"
-          >
-            <path
-              className="fill-cool-grey-300"
-              d="M9 22H5a1 1 0 0 1-1-1V11l8-8 8 8v10a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v4a1 1 0 0 1-1 1zm3-9a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"
-            />
-            <path
-              className="fill-cyan-800"
-              d="M12.01 4.42l-8.3 8.3a1 1 0 1 1-1.42-1.41l9.02-9.02a1 1 0 0 1 1.41 0l8.99 9.02a1 1 0 0 1-1.42 1.41l-8.28-8.3z"
-            />
-          </svg>
-        </Link>
-      </div>
+      <Menu />
 
-      <div className="flex flex-col m-auto mt-8 mb-12 space-y-4 sm:space-y-0 sm:space-x-4 w-fit sm:flex-row">
+      <div className="flex flex-col m-auto mt-6 mb-12 space-y-4 sm:space-y-0 sm:space-x-4 w-fit sm:flex-row">
         {/* DATA INPUT */}
         <div className="box-content w-12 p-4 border-t-8 rounded shadow-lg xl:p-5 h-fit border-t-cyan-800 bg-cool-grey-50">
           {/* <h2 className="mb-5 font-sans text-lg text-cool-grey-600">Data Input</h2> */}
@@ -796,4 +775,23 @@ function generateGraphic({ data, start, end }) {
   }
 
   return output;
+}
+
+// The menu bar component.
+function Menu() {
+  return (
+    <>
+      <div className="invisible h-8 font-RobotoMono" />
+      <div className="fixed top-0 z-10 w-screen h-8 m-auto shadow-xl bg-cool-grey-50">
+        <div className="relative max-w-[1000px] mx-auto">
+          <div className="absolute invisible w-full mx-auto mt-1 text-lg font-semibold text-center sm:visible top-4">
+            Timeclock Tool
+          </div>
+          <Link href="./" className="absolute">
+            <img src="./inverted-logo.png" className="mt-2 ml-4 h-7" />
+          </Link>
+        </div>
+      </div>
+    </>
+  );
 }
