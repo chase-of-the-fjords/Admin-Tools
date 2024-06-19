@@ -145,25 +145,27 @@ export default function App() {
     <>
       <Menu />
 
-      <div className="block m-auto mt-4 w-fit h-fit">
-        <div className="relative block w-full h-6 m-auto mt-6">
-          <input
-            type="file"
-            className="absolute left-0 w-12 mr-4 transition-colors file:w-9 file:cursor-pointer file:border-none file:h-6 file:rounded file:shadow-md file file:bg-cyan-700 file:hover:bg-cyan-800 file:text-cyan-50 file:hover:text-cyan-100"
-            accept=".txt,.text,.nc,.min"
-            onInput={(e) => getInputData(e)}
-          />
-          <button
-            className="absolute right-0 h-6 ml-4 transition-colors rounded shadow-md w-9 bg-cyan-700 hover:bg-cyan-800 text-cyan-50 hover:text-cyan-100"
-            onClick={() => {
-              saveFile(new Blob([output], { type: "text/plain" }), fileName);
-            }}
-          >
-            Save File
-          </button>
-          <div className="h-6 mx-auto w-fit">
+      <div className="block w-full px-4 m-auto mt-4 mb-8 sm:w-fit h-fit">
+        <div className="relative block w-full m-auto mt-6 h-fit">
+          <div className="relative block w-full space-y-2 xl:absolute h-fit">
+            <input
+              type="file"
+              className="w-12 mr-4 transition-colors file:w-9 file:cursor-pointer file:border-none file:h-6 file:rounded file:shadow-md file file:bg-cyan-700 file:hover:bg-cyan-800 file:text-cyan-50 file:hover:text-cyan-100"
+              accept=".txt,.text,.nc,.min"
+              onInput={(e) => getInputData(e)}
+            />
+            <button
+              className="block h-6 transition-colors rounded shadow-md sm:inline-block sm:absolute sm:right-0 w-9 bg-cyan-700 hover:bg-cyan-800 text-cyan-50 hover:text-cyan-100"
+              onClick={() => {
+                saveFile(new Blob([output], { type: "text/plain" }), fileName);
+              }}
+            >
+              Save File
+            </button>
+          </div>
+          <div className="h-6 mt-2 xl:mx-auto sm:w-fit">
             <select
-              className="w-12 h-6 font-semibold text-center rounded shadow-md bg-cool-grey-50"
+              className="w-full h-6 font-semibold text-center rounded shadow-md sm:w-12 bg-cool-grey-50"
               onChange={(e) => setConversion(e.target.value)}
               value={conversion}
             >
@@ -178,9 +180,9 @@ export default function App() {
             </select>
           </div>
         </div>
-        <div className="flex items-center justify-center mt-4">
+        <div className="flex flex-col items-center justify-center w-full mt-4 space-y-4 xl:space-y-0 xl:space-x-4 xl:flex-row">
           <textarea
-            className="mr-4 font-mono border-2 rounded shadow-xl resize-none border-cool-grey-400 w-14 h-14"
+            className="w-full font-mono border-2 rounded shadow-xl resize-none border-cool-grey-400 sm:w-14 h-14"
             value={input}
             onChange={(e) => setInput(e.target.value)}
           />
@@ -193,7 +195,7 @@ export default function App() {
             }}
           >
             <svg
-              className="mx-auto"
+              className="mx-auto rotate-90 xl:rotate-0"
               xmlns="http://www.w3.org/2000/svg"
               height="48"
               viewBox="0 -960 960 960"
@@ -223,7 +225,7 @@ function OutputBox({ conversion, input, output, setOutput }) {
 
   return (
     <textarea
-      className="ml-4 font-mono border-2 rounded shadow-xl resize-none border-cool-grey-400 w-14 h-14"
+      className="w-full font-mono border-2 rounded shadow-xl resize-none border-cool-grey-400 sm:w-14 h-14"
       value={output}
       onChange={(e) => setOutput(e.target.value)}
     ></textarea>
