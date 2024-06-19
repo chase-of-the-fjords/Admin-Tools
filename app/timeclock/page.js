@@ -201,32 +201,11 @@ export default function App() {
   return (
     <>
       {/* HEADER */}
-      <div className="fixed top-0 w-screen m-auto shadow-xl h-7 bg-cool-grey-50">
-        <h1 className="absolute w-full text-xl font-semibold text-center sm:text-2xl bottom-3 sm:bottom-2 text-cool-grey-900">
-          Timeclock Tool
-        </h1>
-        {/* <Link className="absolute cursor-pointer text-cool-grey-500 hover:text-cool-grey-700 bottom-3 sm:bottom-2 left-3" href="./">Home</Link> */}
-        <Link href="./" className="absolute top-3 sm:top-2 left-3 sm:left-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            className="w-5 sm:w-6"
-          >
-            <path
-              className="fill-cool-grey-300"
-              d="M9 22H5a1 1 0 0 1-1-1V11l8-8 8 8v10a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v4a1 1 0 0 1-1 1zm3-9a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"
-            />
-            <path
-              className="fill-cyan-800"
-              d="M12.01 4.42l-8.3 8.3a1 1 0 1 1-1.42-1.41l9.02-9.02a1 1 0 0 1 1.41 0l8.99 9.02a1 1 0 0 1-1.42 1.41l-8.28-8.3z"
-            />
-          </svg>
-        </Link>
-      </div>
+      <Menu />
 
-      <div className="flex flex-col m-auto mt-8 mb-12 space-y-4 sm:space-y-0 sm:space-x-4 w-fit sm:flex-row">
+      <div className="flex flex-col w-full px-4 m-auto mt-4 mb-12 space-y-4 lg:space-y-0 lg:space-x-4 lg:w-fit lg:flex-row">
         {/* DATA INPUT */}
-        <div className="box-content w-12 p-4 border-t-8 rounded shadow-lg xl:p-5 h-fit border-t-cyan-800 bg-cool-grey-50">
+        <div className="box-border w-full p-4 border-t-8 rounded shadow-lg lg:w-fit xl:p-5 h-fit border-t-cyan-800 bg-cool-grey-50">
           {/* <h2 className="mb-5 font-sans text-lg text-cool-grey-600">Data Input</h2> */}
 
           <div className="mb-5">
@@ -279,6 +258,7 @@ export default function App() {
               </span>{" "}
               for Pay Period
             </label>
+            <br />
             <input
               id="start_date"
               type="date"
@@ -303,6 +283,7 @@ export default function App() {
               </span>{" "}
               for Pay Period
             </label>
+            <br />
             <input
               id="end_date"
               type="date"
@@ -370,7 +351,7 @@ export default function App() {
         </div>
 
         {/* EMPLOYEE DATA */}
-        <div className="box-content flex flex-col w-12 p-4 mb-6 border-t-8 rounded shadow-lg xl:p-5 md:w-13 lg:w-15 2xl:w-16 lg:flex-row border-t-cyan-800 bg-cool-grey-50">
+        <div className="box-border flex flex-col w-full p-4 mb-6 border-t-8 rounded shadow-lg xl:p-5 lg:w-15 2xl:w-16 md:flex-row border-t-cyan-800 bg-cool-grey-50">
           {employees.find((employee) => employee.id == selected) !=
             undefined && (
             <EmployeeData
@@ -526,7 +507,7 @@ function EmployeeData({
 
   return (
     <>
-      <div className="font-sans lg:w-13 2xl:mr-9">
+      <div className="font-sans lg:w-13 md:mr-6 lg:mr-0 2xl:mr-9">
         <h3 className="mb-4 font-sans text-xl font-semibold text-cool-grey-900">
           {employee.name} (ID {employee.id}, Shift {employee.shift})
         </h3>
@@ -537,7 +518,7 @@ function EmployeeData({
             onChange={(e) => setDatetime(e.target.value)}
           />
           <button
-            className="block w-8 h-6 p-1 m-auto mt-2 transition-colors rounded md:m-0 md:w-7 md:inline text-md text-cool-grey-900 bg-cool-grey-100 hover:bg-cool-grey-200 focus:outline-cool-grey-500"
+            className="inline h-6 p-1 mt-2 transition-colors rounded w-7 text-md text-cool-grey-900 bg-cool-grey-100 hover:bg-cool-grey-200 focus:outline-cool-grey-500"
             onClick={(e) => addTime(employee.id, datetime)}
           >
             Add
@@ -547,7 +528,7 @@ function EmployeeData({
       </div>
       <div className="text-cool-grey-900">
         {/* <h3 className="mb-4 font-sans text-xl font-semibold text-cool-grey-900">Results</h3> */}
-        <p className="text-sm md:text-base tracking-[-0.1em] md:tracking-tight whitespace-pre font-Courier">
+        <p className="text-sm min-[400px]:text-base tracking-[-0.1em] min-[400px]:tracking-tight whitespace-pre font-Courier">
           <span className="font-bold">Total:</span>{" "}
           {findHours({ data: data.filter((entry) => !entry.deleted) })} <br />
           <br />
@@ -796,4 +777,23 @@ function generateGraphic({ data, start, end }) {
   }
 
   return output;
+}
+
+// The menu bar component.
+function Menu() {
+  return (
+    <>
+      <div className="invisible h-8 font-RobotoMono" />
+      <div className="fixed top-0 z-10 w-screen h-8 m-auto shadow-xl bg-cool-grey-50">
+        <div className="relative max-w-[1000px] mx-auto">
+          <div className="absolute invisible w-full mx-auto mt-1 text-lg font-semibold text-center sm:visible top-4">
+            Timeclock Tool
+          </div>
+          <Link href="./" className="absolute">
+            <img src="./inverted-logo.png" className="mt-2 ml-4 h-7" />
+          </Link>
+        </div>
+      </div>
+    </>
+  );
 }
