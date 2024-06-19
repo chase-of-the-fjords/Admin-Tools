@@ -146,23 +146,7 @@ export default function App() {
       <Menu />
 
       <div className="block w-full px-4 m-auto mt-4 mb-8 sm:w-fit h-fit">
-        <div className="relative block w-full m-auto mt-6 h-fit">
-          <div className="relative block w-full space-y-2 min-[360px]:space-y-0 xl:absolute h-fit">
-            <input
-              type="file"
-              className="w-12 mr-4 transition-colors file:w-9 file:cursor-pointer file:border-none file:h-6 file:rounded file:shadow-md file file:bg-cyan-700 file:hover:bg-cyan-800 file:text-cyan-50 file:hover:text-cyan-100"
-              accept=".txt,.text,.nc,.min"
-              onInput={(e) => getInputData(e)}
-            />
-            <button
-              className="block h-6 transition-colors rounded shadow-md min-[360px]:inline-block min-[360px]:absolute min-[360px]:right-0 w-9 bg-cyan-700 hover:bg-cyan-800 text-cyan-50 hover:text-cyan-100"
-              onClick={() => {
-                saveFile(new Blob([output], { type: "text/plain" }), fileName);
-              }}
-            >
-              Save File
-            </button>
-          </div>
+        <div className="relative flex flex-col-reverse w-full m-auto mt-6 xl:block h-fit">
           <div className="h-6 mt-2 xl:mx-auto sm:w-fit">
             <select
               className="w-full h-6 font-semibold text-center rounded shadow-md sm:w-12 bg-cool-grey-50"
@@ -178,6 +162,22 @@ export default function App() {
                 );
               })}
             </select>
+          </div>
+          <div className="relative block w-full space-y-2 min-[360px]:space-y-0 xl:absolute xl:top-0 h-fit pointer-events-none">
+            <input
+              type="file"
+              className="w-12 mr-4 transition-colors pointer-events-auto file:w-9 file:cursor-pointer file:border-none file:h-6 file:rounded file:shadow-md file file:bg-cyan-700 file:hover:bg-cyan-800 file:text-cyan-50 file:hover:text-cyan-100"
+              accept=".txt,.text,.nc,.min"
+              onInput={(e) => getInputData(e)}
+            />
+            <button
+              className="block h-6 transition-colors pointer-events-auto rounded shadow-md min-[360px]:inline-block min-[360px]:absolute min-[360px]:right-0 w-9 bg-cyan-700 hover:bg-cyan-800 text-cyan-50 hover:text-cyan-100"
+              onClick={() => {
+                saveFile(new Blob([output], { type: "text/plain" }), fileName);
+              }}
+            >
+              Save File
+            </button>
           </div>
         </div>
         <div className="flex flex-col items-center justify-center w-full mt-4 space-y-4 xl:space-y-0 xl:space-x-4 xl:flex-row">
