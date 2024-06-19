@@ -182,7 +182,7 @@ export default function App() {
         </div>
         <div className="flex flex-col items-center justify-center w-full mt-4 space-y-4 xl:space-y-0 xl:space-x-4 xl:flex-row">
           <textarea
-            className="w-full px-4 font-mono border-2 rounded shadow-xl resize-none border-cool-grey-400 sm:w-14 h-14"
+            className="w-full font-mono border-2 rounded shadow-xl resize-none border-cool-grey-400 sm:w-14 h-14"
             value={input}
             onChange={(e) => setInput(e.target.value)}
           />
