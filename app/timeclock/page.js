@@ -203,9 +203,9 @@ export default function App() {
       {/* HEADER */}
       <Menu />
 
-      <div className="flex flex-col m-auto mt-6 mb-12 space-y-4 sm:space-y-0 sm:space-x-4 w-fit sm:flex-row">
+      <div className="flex flex-col w-full px-4 m-auto mt-4 mb-12 space-y-4 sm:space-y-0 sm:space-x-4 sm:w-fit sm:flex-row">
         {/* DATA INPUT */}
-        <div className="box-content w-12 p-4 border-t-8 rounded shadow-lg xl:p-5 h-fit border-t-cyan-800 bg-cool-grey-50">
+        <div className="box-border w-full p-4 border-t-8 rounded shadow-lg sm:w-12 xl:p-5 h-fit border-t-cyan-800 bg-cool-grey-50">
           {/* <h2 className="mb-5 font-sans text-lg text-cool-grey-600">Data Input</h2> */}
 
           <div className="mb-5">
@@ -258,6 +258,7 @@ export default function App() {
               </span>{" "}
               for Pay Period
             </label>
+            <br />
             <input
               id="start_date"
               type="date"
@@ -282,6 +283,7 @@ export default function App() {
               </span>{" "}
               for Pay Period
             </label>
+            <br />
             <input
               id="end_date"
               type="date"
@@ -349,7 +351,7 @@ export default function App() {
         </div>
 
         {/* EMPLOYEE DATA */}
-        <div className="box-content flex flex-col w-12 p-4 mb-6 border-t-8 rounded shadow-lg xl:p-5 md:w-13 lg:w-15 2xl:w-16 lg:flex-row border-t-cyan-800 bg-cool-grey-50">
+        <div className="box-border flex flex-col w-full p-4 mb-6 border-t-8 rounded shadow-lg sm:w-12 xl:p-5 md:w-13 lg:w-15 2xl:w-16 lg:flex-row border-t-cyan-800 bg-cool-grey-50">
           {employees.find((employee) => employee.id == selected) !=
             undefined && (
             <EmployeeData
