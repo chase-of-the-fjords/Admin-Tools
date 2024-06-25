@@ -73,6 +73,7 @@ module.exports = {
       fontFamily: {
         Courier: ["courier-std", "monospace"],
         inter: ["var(--font-inter)"],
+        Poppins: ["var(--font-poppins)"],
         RobotoMono: ["var(--font-roboto-mono)"],
       },
     },
