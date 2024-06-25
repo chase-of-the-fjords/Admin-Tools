@@ -21,7 +21,9 @@ function App() {
       <Menu />
 
       <div className="max-w-[280px] sm:max-w-[540px] min-[840px]:max-w-[800px] mx-auto mt-9">
-        <h3 className="mb-3 ml-6 text-2xl font-semibold">Machine Shop</h3>
+        <h3 className="mb-3 ml-6 text-2xl font-semibold font-Poppins">
+          Machine Shop
+        </h3>
 
         <div className="flex flex-wrap gap-[20px] p-[20px] rounded-lg shadow-inner bg-cool-grey-200">
           <Card
@@ -48,7 +50,9 @@ function App() {
       </div>
 
       <div className="max-w-[280px] sm:max-w-[540px] min-[840px]:max-w-[800px] mx-auto mt-6 mb-6">
-        <h3 className="mb-3 ml-6 text-2xl font-semibold">Admin Tools</h3>
+        <h3 className="mb-3 ml-6 text-2xl font-semibold font-Poppins">
+          Admin Tools
+        </h3>
 
         <div className="flex flex-wrap gap-[20px] p-[20px] rounded-lg shadow-inner bg-cool-grey-200">
           <Card
@@ -85,7 +89,7 @@ function Card({ text, description, link }) {
     <div className="w-fit font-inter">
       <Link href={link}>
         <div className="w-12 h-10 transition-all border-t-8 rounded-lg shadow-md cursor-pointer hover:shadow-lg hover:-translate-y-1 bg-cool-grey-50 border-t-cyan-800">
-          <div className="mt-2 ml-4">
+          <div className="mt-2 ml-4 font-Poppins">
             <h3 className="text-xl font-semibold text-cyan-800">{text}</h3>
             <p className="mt-1 mr-4 leading-5">{description}</p>
           </div>
