@@ -72,6 +72,8 @@ import z from "zod";
 
 import { compile, evaluate } from "mathjs";
 
+import moment from "moment";
+
 const ReloadContext = createContext<Function>(() => {});
 const DataContext = createContext<{
   companies: CompanyType[];
@@ -571,6 +573,25 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
       });
   }, [openPopup]);
 
+  const log = useMemo(() => {
+    if (order.log) return JSON.parse(order.log)
+    else return []
+  }, [order])
+
+  const lastUpdatedMessage = useMemo(() => {
+    if (log.length == 0) return "History unavailable";
+    let lastAction = log[log.length - 1];
+    if (lastAction.action == "create") {
+      return `Created ${moment(log[log.length - 1].timestamp).format("MMMM Do YYYY [at] h:mm A")}`
+    }
+    if (lastAction.action == "update") {
+      return `Last updated ${moment(log[log.length - 1].timestamp).format("MMMM Do YYYY [at] h:mm A")}`
+    }
+    if (lastAction.action == "delete") {
+      return `Deleted ${moment(log[log.length - 1].timestamp).format("MMMM Do YYYY [at] h:mm A")}`
+    }
+  }, [log])
+
   return user.active == 1 ? (
     <Dialog open={openPopup} onOpenChange={setOpenPopup}>
       <DialogTrigger asChild>
@@ -620,7 +641,7 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
       <DialogContent className="sm:max-w-[425px] bg-white">
         <DialogHeader>
           <DialogTitle>Edit order</DialogTitle>
-          <DialogDescription>Edit an order.</DialogDescription>
+          <DialogDescription>{lastUpdatedMessage}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -1016,7 +1037,6 @@ function CreateOrderForm({ company }: { company: CompanyType }) {
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <DialogHeader>
               <DialogTitle>Create order</DialogTitle>
-              <DialogDescription>Create an order.</DialogDescription>
             </DialogHeader>
             <div className="grid grid-cols-4 gap-4 py-4">
               {/* PART NAME */}
