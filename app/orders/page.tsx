@@ -66,6 +66,18 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
@@ -1599,22 +1611,37 @@ function EditCompanyForm({
                 )}
               />
             </div>
-            <DialogFooter className="gap-2">
-              <Button
-                type="button"
-                variant="destructive"
-                onClick={async () => {
-                  await deleteCompany({
-                    company,
-                    user,
-                  });
-                  setOpen(false);
-                  reload();
-                }}
-              >
-                Delete
-              </Button>
-              <Button type="submit">Save</Button>
+            <DialogFooter className="relative block gap-2">
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                  >
+                    Delete
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Deleting a company is not easy to reverse. If you meant to save, press "Cancel" and return to the edit company form.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={async () => {
+                      await deleteCompany({
+                        company,
+                        user,
+                      });
+                      setOpen(false);
+                      reload();
+                    }}>Confirm</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+              <Button type="submit" className="float-right">Save</Button>
             </DialogFooter>
           </form>
         </Form>
