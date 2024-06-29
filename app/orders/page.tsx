@@ -93,6 +93,7 @@ type CompanyType = {
   image: any;
   priority: number;
   notes: string;
+  log: any;
 };
 
 type OrderType = {
@@ -1464,7 +1465,7 @@ function EditCompanyForm({
       notes: data.notes,
     };
 
-    await editCompany({ company: newCompany, user });
+    await editCompany({ company: newCompany, originalCompany: company, user });
     setOpen(false);
     reload();
   };

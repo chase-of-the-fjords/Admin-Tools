@@ -80,7 +80,7 @@ export async function editOrder({ order, originalOrder, user }) {
 /**
  * Edits an existing company given an company object.
  */
-export async function editCompany({ company, user }) {
+export async function editCompany({ company, originalCompany, user }) {
   // The data being passed into the API.
   const postData = {
     method: "PATCH",
@@ -88,7 +88,7 @@ export async function editCompany({ company, user }) {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
     },
-    body: JSON.stringify({ company, user }),
+    body: JSON.stringify({ company, originalCompany, user }),
   };
 
   // Accesses the orders API.

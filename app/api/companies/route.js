@@ -19,15 +19,32 @@ export async function POST(request) {
 
   if (users.length == 0 || users[0].active != 1) return new Response(null);
 
+  // Adds an entry to the log:
+
+  const logEntry = {
+    action: "create",
+    user: users[0].id,
+    timestamp: (new Date()).toLocaleString('lt-LT', {timeZone: "America/Los_Angeles"}),
+    values: {
+      name: body.company.name,
+      image: body.company.image,
+      priority: body.company.priority,
+      notes: body.company.notes
+    }
+  }
+
+  const log = [ logEntry ];
+
   // The request:
   const company = await query({
     // The SQL query:
-    query: `INSERT INTO companies (name, image, priority, notes, active) 
+    query: `INSERT INTO companies (name, image, priority, notes, active, log) 
       VALUES (${JSON.stringify(body.company.name)}, 
       ${JSON.stringify(body.company.image)},
       ${body.company.priority},
       ${JSON.stringify(body.company.notes)},
-      1)`,
+      1,
+      '${JSON.stringify(log)}')`,
     values: [],
   });
 
@@ -51,6 +68,28 @@ export async function PATCH(request) {
 
   if (users.length == 0 || users[0].active != 1) return new Response(null);
 
+  // Adds an entry to the log:
+
+  const changelog = ["name", "image", "priority", "notes"].filter((change) => {
+    if (change == "name") return true;
+    return body.company[change] !== body.originalCompany[change]
+  }).map((change) => {
+    return {
+      field: change,
+      old: body.originalCompany[change],
+      new: body.company[change],
+    }
+  })
+
+  const logEntry = {
+    action: "update",
+    user: users[0].id,
+    timestamp: (new Date()).toLocaleString('lt-LT', {timeZone: "America/Los_Angeles"}),
+    values: changelog,
+  }
+
+  const updatedLog = body.originalCompany.log ? [ ...JSON.parse(body.originalCompany.log), logEntry ] : [ logEntry ];
+
   // The request:
   const company = await query({
     // The SQL query:
@@ -59,7 +98,8 @@ export async function PATCH(request) {
         name = ${JSON.stringify(body.company.name)},
         image = ${JSON.stringify(body.company.image)},
         priority = ${JSON.stringify(body.company.priority)},
-        notes = ${JSON.stringify(body.company.notes)}
+        notes = ${JSON.stringify(body.company.notes)},
+        log = '${JSON.stringify(updatedLog)}'
       WHERE id=${body.company.id}`,
     values: [],
   });
@@ -96,12 +136,31 @@ export async function DELETE(request) {
 
   if (users.length == 0 || users[0].active != 1) return new Response(null);
 
+  // Adds an entry to the log:
+
+  const changelog = ["name", "notes"].map((change) => {
+    return {
+      field: change,
+      value: body.company[change]
+    }
+  })
+
+  const logEntry = {
+    action: "delete",
+    user: users[0].id,
+    timestamp: (new Date()).toLocaleString('lt-LT', {timeZone: "America/Los_Angeles"}),
+    values: changelog,
+  }
+
+  const updatedLog = body.company.log ? [ ...JSON.parse(body.company.log), logEntry ] : [ logEntry ];
+
   // The request:
   const company = await query({
     // The SQL query:
     query: `UPDATE companies
       SET 
-        active = 0
+        active = 0,
+        log = '${JSON.stringify(updatedLog)}'
       WHERE id=${body.company.id}`,
     values: [],
   });
