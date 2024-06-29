@@ -401,7 +401,7 @@ function Company({
                       src={`${company.image}`}
                       className={`absolute bottom-0 h-[32px] ${
                         (user.active || company.notes) && "cursor-pointer"
-                      }`}
+                      } ${user.active || "left-0 right-0 mx-auto"}`}
                       alt={company.name}
                       onClick={() => {
                         if (user.active) setEditCompanyOpen(true);
@@ -411,7 +411,7 @@ function Company({
                     <h3
                       className={`absolute bottom-0 text-2xl font-semibold align-bottom ${
                         (user.active || company.notes) && "cursor-pointer"
-                      }`}
+                      } ${user.active || "left-0 right-0 mx-auto text-center"}`}
                       onClick={() => {
                         if (user.active) setEditCompanyOpen(true);
                       }}
