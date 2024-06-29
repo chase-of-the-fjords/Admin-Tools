@@ -22,10 +22,11 @@ export async function POST(request) {
   // The request:
   const company = await query({
     // The SQL query:
-    query: `INSERT INTO companies (name, image, priority, active) 
+    query: `INSERT INTO companies (name, image, priority, notes, active) 
       VALUES (${JSON.stringify(body.company.name)}, 
       ${JSON.stringify(body.company.image)},
       ${body.company.priority},
+      ${JSON.stringify(body.company.notes)},
       1)`,
     values: [],
   });
@@ -57,7 +58,8 @@ export async function PATCH(request) {
       SET 
         name = ${JSON.stringify(body.company.name)},
         image = ${JSON.stringify(body.company.image)},
-        priority = ${JSON.stringify(body.company.priority)}
+        priority = ${JSON.stringify(body.company.priority)},
+        notes = ${JSON.stringify(body.company.notes)}
       WHERE id=${body.company.id}`,
     values: [],
   });

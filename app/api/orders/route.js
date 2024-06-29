@@ -22,10 +22,10 @@ export async function POST(request) {
   // The request:
   const order = await query({
     // The SQL query:
-    query: `INSERT INTO orders (name, company, quantity, completed, priority, notes, start, id) 
+    query: `INSERT INTO orders (name, company, category, quantity, completed, priority, notes, start, id) 
       VALUES (${JSON.stringify(body.order.name)}, ${JSON.stringify(
       body.order.company
-    )}, ${body.order.quantity}, ${body.order.completed}, ${
+    )}, ${body.order.category}, ${body.order.quantity}, ${body.order.completed}, ${
       body.order.priority
     }, ${JSON.stringify(
       body.order.notes
@@ -62,6 +62,7 @@ export async function PATCH(request) {
       SET 
         name = ${JSON.stringify(body.order.name)},
         company = ${JSON.stringify(body.order.company)},
+        category = ${body.order.category},
         quantity = ${body.order.quantity}, 
         completed = ${body.order.completed}, 
         priority = ${body.order.priority},

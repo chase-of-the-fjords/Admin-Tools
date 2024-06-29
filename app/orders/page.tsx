@@ -92,12 +92,14 @@ type CompanyType = {
   name: string;
   image: any;
   priority: number;
+  notes: string;
 };
 
 type OrderType = {
   order_id: number;
   name: string;
   company: number;
+  category: number;
   quantity: number;
   completed: number;
   priority: number;
@@ -338,13 +340,37 @@ function Company({
     });
   }, [orders]);
 
+  const sortedPutters = useMemo(() => {
+    return sortedOrders.filter((order) => { return order.category == 0 });
+  }, [sortedOrders])
+  
+  const sortedAccessories = useMemo(() => {
+    return sortedOrders.filter((order) => { return order.category == 1 });
+  }, [sortedOrders])
+
   const totalOpenOrders = useMemo(() => {
     let total = 0;
     orders.forEach((order) => {
-      total += order.quantity - order.completed;
+      if (order.end == null) total += order.quantity - order.completed;
     });
     return total;
   }, [orders]);
+
+  const totalOpenPutters = useMemo(() => {
+    let total = 0;
+    sortedPutters.forEach((order) => {
+      if (order.end == null) total += order.quantity - order.completed;
+    });
+    return total;
+  }, [sortedPutters]);
+
+  const totalOpenAccessories = useMemo(() => {
+    let total = 0;
+    sortedAccessories.forEach((order) => {
+      if (order.end == null) total += order.quantity - order.completed;
+    });
+    return total;
+  }, [sortedAccessories]);
 
   return (
     <>
@@ -353,40 +379,58 @@ function Company({
           {/* Logo & button */}
           <div className="relative mb-4 h-fit">
             <div className="h-[48px]">
-              {company.image != "" ? (
-                <img
-                  src={`${company.image}`}
-                  className={`absolute bottom-0 h-[32px] ${
-                    user.active && "cursor-pointer"
-                  }`}
-                  alt={company.name}
-                  onClick={() => {
-                    if (user.active) setEditCompanyOpen(true);
-                  }}
-                />
-              ) : (
-                <h3
-                  className={`absolute bottom-0 text-2xl font-semibold align-bottom ${
-                    user.active && "cursor-pointer"
-                  }`}
-                  onClick={() => {
-                    if (user.active) setEditCompanyOpen(true);
-                  }}
-                >
-                  {company.name}
-                </h3>
-              )}
+              <HoverCard >
+                <HoverCardTrigger asChild>
+                  {company.image != "" ? (
+                    <img
+                      src={`${company.image}`}
+                      className={`absolute bottom-0 h-[32px] ${
+                        (user.active || company.notes) && "cursor-pointer"
+                      }`}
+                      alt={company.name}
+                      onClick={() => {
+                        if (user.active) setEditCompanyOpen(true);
+                      }}
+                    />
+                  ) : (
+                    <h3
+                      className={`absolute bottom-0 text-2xl font-semibold align-bottom ${
+                        (user.active || company.notes) && "cursor-pointer"
+                      }`}
+                      onClick={() => {
+                        if (user.active) setEditCompanyOpen(true);
+                      }}
+                    >
+                      {company.name}
+                    </h3>
+                  )}
+                </HoverCardTrigger>
+                {company.notes != "" && <HoverCardContent className="w-80">
+                  <div className="text-sm whitespace-pre-line">{company.notes}</div>
+                </HoverCardContent>}
+              </HoverCard>
               {user.active == 1 && <CreateOrderForm company={company} />}
             </div>
           </div>
-          {sortedOrders.map((order) => {
+          {sortedPutters.length > 0 && <div className="mb-2 ml-2 text-xl font-semibold text-center">
+            {totalOpenPutters} putter{totalOpenPutters == 1 ? "" : "s"}
+          </div>}
+          {sortedPutters.map((order) => {
             return (
               <Order company={company} order={order} key={order.order_id} />
             );
           })}
-          <div className="text-xl font-semibold text-center">
+          {sortedAccessories.length > 0 && <div className="mb-2 ml-2 text-xl font-semibold text-center">
+            {totalOpenAccessories} {totalOpenAccessories == 1 ? "accessory" : "accessories"}
+          </div>}
+          {sortedAccessories.map((order) => {
+            return (
+              <Order company={company} order={order} key={order.order_id} />
+            );
+          })}
+          {/* <div className="text-xl font-semibold text-center">
             {totalOpenOrders} open orders
-          </div>
+          </div> */}
           <EditCompanyForm
             company={company}
             isOpen={editCompanyOpen}
@@ -414,6 +458,7 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
   });
 
   type PriorityEnum = "Low" | "Medium" | "High";
+  type CategoryEnum = "Putter" | "Accessory";
 
   const isOldJob = useMemo(() => {
     return order.end != null;
@@ -425,8 +470,16 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
     else return "Medium";
   }, [order]);
 
+  let defaultCategory: CategoryEnum = useMemo(() => {
+    if (order.category == 1) return "Accessory";
+    return "Putter";
+  }, [order])
+
   const formSchema = z.object({
     company: CompanyEnum,
+    category: z.enum(["Putter", "Accessory"], {
+      invalid_type_error: "Invalid input",
+    }),
     name: z.string().min(2, {
       message: "Minimum 2 characters",
     }),
@@ -462,6 +515,7 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
     defaultValues: useMemo(() => {
       return {
         company: company.name,
+        category: defaultCategory,
         name: order.name,
         id: order.id,
         completed: order.completed,
@@ -477,9 +531,13 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
     if (data.priority == "Low") priority = 0;
     else if (data.priority == "High") priority = 2;
 
+    let category = 0;
+    if (data.category == "Accessory") category = 1;
+
     let editedOrder = {
       name: data.name,
       company: companies.find((c: CompanyType) => data.company == c.name).id,
+      category: category,
       quantity: data.total,
       completed: data.completed,
       priority: priority,
@@ -502,6 +560,7 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
     if (openPopup)
       form.reset({
         company: company.name,
+        category: defaultCategory,
         name: order.name,
         id: order.id,
         completed: order.completed,
@@ -570,7 +629,7 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
                 name="name"
                 control={form.control}
                 render={({ field }) => (
-                  <FormItem className="col-span-2">
+                  <FormItem className="col-span-4">
                     <FormLabel htmlFor="name" className="text-left">
                       Part <span className="text-red-500">*</span>
                     </FormLabel>
@@ -612,6 +671,40 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
                                 {c.name}
                               </SelectItem>
                             ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage className="mt-2" />
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              {/* CATEGORY */}
+              <FormField
+                name="category"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <Label htmlFor="category" className="text-left">
+                      Category <span className="text-red-500">*</span>
+                    </Label>
+                    <FormControl>
+                      <div>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={defaultCategory}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Putter">
+                              Putter
+                            </SelectItem>
+                            <SelectItem value="Accessory">
+                              Accessory
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage className="mt-2" />
@@ -811,11 +904,7 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
       </HoverCardTrigger>
       {order.notes != "" && (
         <HoverCardContent className="w-80 bg-cool-grey-50">
-          <div className="flex justify-between space-x-4">
-            <div className="space-y-1">
-              <p className="text-sm whitespace-pre-line">{order.notes}</p>
-            </div>
-          </div>
+          <p className="text-sm whitespace-pre-line">{order.notes}</p>
         </HoverCardContent>
       )}
     </HoverCard>
@@ -837,6 +926,9 @@ function CreateOrderForm({ company }: { company: CompanyType }) {
 
   const formSchema = z.object({
     company: CompanyEnum,
+    category: z.enum(["Putter", "Accessory"], {
+      invalid_type_error: "Invalid input",
+    }),
     name: z.string().min(2, {
       message: "Minimum 2 characters",
     }),
@@ -872,6 +964,7 @@ function CreateOrderForm({ company }: { company: CompanyType }) {
     defaultValues: useMemo(() => {
       return {
         company: company.name,
+        category: undefined,
         name: undefined,
         id: undefined,
         completed: 0,
@@ -890,10 +983,14 @@ function CreateOrderForm({ company }: { company: CompanyType }) {
     let priority = 1;
     if (data.priority == "Low") priority = 0;
     else if (data.priority == "High") priority = 2;
+    
+    let category = 0;
+    if (data.category == "Accessory") category = 1;
 
     let order = {
       name: data.name,
       company: company.id,
+      category: category,
       quantity: data.total,
       completed: data.completed,
       priority: priority,
@@ -926,7 +1023,7 @@ function CreateOrderForm({ company }: { company: CompanyType }) {
                 name="name"
                 control={form.control}
                 render={({ field }) => (
-                  <FormItem className="col-span-2">
+                  <FormItem className="col-span-4">
                     <FormLabel htmlFor="name" className="text-left">
                       Part <span className="text-red-500">*</span>
                     </FormLabel>
@@ -970,6 +1067,39 @@ function CreateOrderForm({ company }: { company: CompanyType }) {
                                 </SelectItem>
                               );
                             })}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage className="mt-2" />
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              {/* CATEGORY */}
+              <FormField
+                name="category"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <Label htmlFor="category" className="text-left">
+                      Category <span className="text-red-500">*</span>
+                    </Label>
+                    <FormControl>
+                      <div>
+                        <Select
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Putter">
+                              Putter
+                            </SelectItem>
+                            <SelectItem value="Accessory">
+                              Accessory
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage className="mt-2" />
@@ -1125,6 +1255,7 @@ function CreateCompanyForm({
     priority: z.optional(
       z.number().min(1, { message: "Priority must be at least 1" })
     ),
+    notes: z.optional(z.string())
   });
 
   type FormType = z.infer<typeof formSchema>;
@@ -1135,6 +1266,7 @@ function CreateCompanyForm({
       name: "",
       logo: "",
       priority: undefined,
+      notes: "",
     },
   });
 
@@ -1161,6 +1293,7 @@ function CreateCompanyForm({
       name: data.name,
       image: data.logo,
       priority: priorityValue,
+      notes: data.notes,
     };
 
     await createCompany({ company, user });
@@ -1256,6 +1389,27 @@ function CreateCompanyForm({
                   </FormItem>
                 )}
               />
+
+              {/* NOTES */}
+              <FormField
+                name="notes"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem className="col-span-4">
+                    <FormLabel>Notes</FormLabel>
+                    <FormControl className="col-span-3">
+                      <div>
+                        <Textarea
+                          {...form.register("notes")}
+                          placeholder=""
+                          onFocus={(e) => e.target.select()}
+                        />
+                        <FormMessage className="mt-2" />
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
             </div>
             <DialogFooter className="gap-2">
               <Button type="submit">Save</Button>
@@ -1286,6 +1440,7 @@ function EditCompanyForm({
     }),
     logo: z.optional(z.string()),
     priority: z.number().min(1, { message: "Priority must be at least 1" }),
+    notes: z.optional(z.string()),
   });
 
   type FormType = z.infer<typeof formSchema>;
@@ -1296,6 +1451,7 @@ function EditCompanyForm({
       name: company.name,
       logo: company.image,
       priority: company.priority,
+      notes: company.notes,
     },
   });
 
@@ -1305,6 +1461,7 @@ function EditCompanyForm({
       image: data.logo,
       priority: data.priority,
       id: company.id,
+      notes: data.notes,
     };
 
     await editCompany({ company: newCompany, user });
@@ -1391,6 +1548,28 @@ function EditCompanyForm({
                           onFocus={(e) => e.target.select()}
                           type="number"
                           placeholder="50"
+                        />
+                        <FormMessage className="mt-2" />
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              
+              {/* NOTES */}
+              <FormField
+                name="notes"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem className="col-span-4">
+                    <FormLabel>Notes</FormLabel>
+                    <FormControl className="col-span-3">
+                      <div>
+                        <Textarea
+                          {...form.register("notes")}
+                          placeholder=""
+                          defaultValue={company.notes}
+                          onFocus={(e) => e.target.select()}
                         />
                         <FormMessage className="mt-2" />
                       </div>
