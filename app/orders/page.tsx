@@ -546,7 +546,7 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
       order_id: order.order_id,
     };
 
-    await editOrder({ order: editedOrder, user });
+    await editOrder({ order: editedOrder, originalOrder: order, user });
     setOpenPopup(false);
     await reload();
   };
@@ -844,7 +844,7 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
                   variant="destructive"
                   onClick={async () => {
                     await deleteOrder({
-                      order: { order_id: order.order_id },
+                      order: order,
                       user: user,
                     });
                     setOpenPopup(false);
