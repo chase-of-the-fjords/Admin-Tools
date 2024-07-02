@@ -203,12 +203,12 @@ export default function App() {
       {/* HEADER */}
       <Menu />
 
-      <div className="flex flex-col w-full px-4 m-auto mt-4 mb-12 space-y-4 lg:space-y-0 lg:space-x-4 lg:w-fit lg:flex-row">
+      <div className="flex flex-col w-full px-4 m-auto mt-4 space-y-4 mb-60 lg:space-y-0 lg:space-x-4 lg:w-fit lg:flex-row">
         {/* DATA INPUT */}
-        <div className="box-border w-full p-4 border-t-8 rounded shadow-lg lg:w-fit xl:p-5 h-fit border-t-cyan-800 bg-cool-grey-50">
+        <div className="box-border w-full p-4 border-t-8 rounded shadow-lg lg:w-fit xl:p-6 h-fit border-t-cyan-800 bg-cool-grey-50">
           {/* <h2 className="mb-5 font-sans text-lg text-cool-grey-600">Data Input</h2> */}
 
-          <div className="mb-5">
+          <div className="mb-6">
             <label
               className="font-sans text-xl font-semibold text-cool-grey-900"
               htmlFor="employee_data"
@@ -217,7 +217,7 @@ export default function App() {
             </label>
             <input
               id="employee_data"
-              className="block mt-1 text-sm w-11 text-cool-grey-500 file:block file:w-9 file:p-2 file:mb-1 file:text-cool-grey-700 file:border-0 file:border-cool-grey-500 file:border-solid file:rounded-md file:bg-cool-grey-100 hover:file:bg-cool-grey-200 file:transition-colors file:cursor-pointer"
+              className="block mt-1 text-sm w-44 text-cool-grey-500 file:block file:w-24 file:p-2 file:mb-1 file:text-cool-grey-700 file:border-0 file:border-cool-grey-500 file:border-solid file:rounded-md file:bg-cool-grey-100 hover:file:bg-cool-grey-200 file:transition-colors file:cursor-pointer"
               type="file"
               multiple={false}
               accept=".dat, .txt"
@@ -228,7 +228,7 @@ export default function App() {
             />
           </div>
 
-          <div className="mb-5">
+          <div className="mb-6">
             <label
               className="font-sans text-xl font-semibold text-cool-grey-900"
               htmlFor="timeclock_data"
@@ -237,7 +237,7 @@ export default function App() {
             </label>
             <input
               id="timeclock_data"
-              className="block mt-1 text-sm w-11 text-cool-grey-500 file:block file:w-9 file:p-2 file:mb-1 file:text-cool-grey-700 file:border-0 file:border-cool-grey-500 file:border-solid file:rounded-md file:bg-cool-grey-100 hover:file:bg-cool-grey-200 file:transition-colors file:cursor-pointer"
+              className="block mt-1 text-sm w-44 text-cool-grey-500 file:block file:w-24 file:p-2 file:mb-1 file:text-cool-grey-700 file:border-0 file:border-cool-grey-500 file:border-solid file:rounded-md file:bg-cool-grey-100 hover:file:bg-cool-grey-200 file:transition-colors file:cursor-pointer"
               type="file"
               multiple={true}
               accept=".dat, .txt"
@@ -248,7 +248,7 @@ export default function App() {
             />
           </div>
 
-          <div className="mb-5">
+          <div className="mb-6">
             <label
               className="font-sans text-cool-grey-600 text-md"
               htmlFor="start_date"
@@ -269,11 +269,11 @@ export default function App() {
               onChange={(e) => {
                 setStart(e.target.value);
               }}
-              className="w-10 p-2 mt-1 rounded text-md text-cool-grey-900 bg-cool-grey-100 focus:outline-cool-grey-500"
+              className="w-32 p-2 mt-1 rounded text-md text-cool-grey-900 bg-cool-grey-100 focus:outline-cool-grey-500"
             />
           </div>
 
-          <div className="mb-5">
+          <div className="mb-6">
             <label
               className="font-sans text-cool-grey-600 text-md"
               htmlFor="end_date"
@@ -294,7 +294,7 @@ export default function App() {
               onChange={(e) => {
                 setEnd(e.target.value);
               }}
-              className="w-10 p-2 mt-1 rounded text-md text-cool-grey-900 bg-cool-grey-100 focus:outline-cool-grey-500"
+              className="w-32 p-2 mt-1 rounded text-md text-cool-grey-900 bg-cool-grey-100 focus:outline-cool-grey-500"
             />
           </div>
 
@@ -304,7 +304,7 @@ export default function App() {
             </h3>
             <div className="flex mt-1">
               <select
-                className="p-2 mr-2 rounded w-11 text-md text-cool-grey-900 bg-cool-grey-100 focus:outline-cool-grey-500"
+                className="p-2 mr-2 rounded w-44 text-md text-cool-grey-900 bg-cool-grey-100 focus:outline-cool-grey-500"
                 name="employee"
                 id="employee"
                 value={selected}
@@ -324,7 +324,7 @@ export default function App() {
                 })}
               </select>
               <button
-                className="block p-1 mr-2 transition-colors rounded text-md w-7 text-cool-grey-900 hover:bg-cool-grey-100 focus:outline-cool-grey-500"
+                className="block w-12 p-1 mr-2 transition-colors rounded text-md text-cool-grey-900 hover:bg-cool-grey-100 focus:outline-cool-grey-500"
                 onClick={() => {
                   let next_employee = 0;
 
@@ -351,7 +351,7 @@ export default function App() {
         </div>
 
         {/* EMPLOYEE DATA */}
-        <div className="box-border flex flex-col w-full p-4 mb-6 border-t-8 rounded shadow-lg xl:p-5 lg:w-15 2xl:w-16 md:flex-row border-t-cyan-800 bg-cool-grey-50">
+        <div className="box-border flex flex-col w-full p-4 mb-8 border-t-8 rounded shadow-lg xl:p-6 lg:w-[640px] 2xl:w-[920px] md:flex-row border-t-cyan-800 bg-cool-grey-50">
           {employees.find((employee) => employee.id == selected) !=
             undefined && (
             <EmployeeData
@@ -467,7 +467,7 @@ function EmployeeData({
         }
 
         timeclockRows.push(
-          <div className="w-12 mb-5 h-fit" key={clockin.unique}>
+          <div className="mb-6 w-60 h-fit" key={clockin.unique}>
             <p className="text-lg font-semibold">{`${hours} ${
               hours != 1 ? "hours" : "hour"
             }, ${minutes} ${minutes != 1 ? "minutes" : "minute"}`}</p>
@@ -497,7 +497,7 @@ function EmployeeData({
 
     if (i + 1 == data.length && clockinRow.length != 0) {
       timeclockRows.push(
-        <div className="w-12 mb-5 h-fit" key={clockin.unique}>
+        <div className="mb-6 w-60 h-fit" key={clockin.unique}>
           <p className="text-lg font-semibold">Incomplete Shift</p>
           {clockinRow}
         </div>
@@ -507,18 +507,18 @@ function EmployeeData({
 
   return (
     <>
-      <div className="font-sans lg:w-13 md:mr-6 lg:mr-0 2xl:mr-9">
+      <div className="font-sans lg:w-80 md:mr-8 lg:mr-0 2xl:mr-24">
         <h3 className="mb-4 font-sans text-xl font-semibold text-cool-grey-900">
           {employee.name} (ID {employee.id}, Shift {employee.shift})
         </h3>
         <div className="mb-3">
           <input
-            className="w-12 h-6 p-1 mr-2 border rounded shadow-md text-md text-cool-grey-900 bg-cool-grey-100 border-cyan-800 focus:outline-cool-grey-500"
+            className="h-8 p-1 mr-2 border rounded shadow-md w-60 text-md text-cool-grey-900 bg-cool-grey-100 border-cyan-800 focus:outline-cool-grey-500"
             type="datetime-local"
             onChange={(e) => setDatetime(e.target.value)}
           />
           <button
-            className="inline h-6 p-1 mt-2 transition-colors rounded w-7 text-md text-cool-grey-900 bg-cool-grey-100 hover:bg-cool-grey-200 focus:outline-cool-grey-500"
+            className="inline w-12 h-8 p-1 mt-2 transition-colors rounded text-md text-cool-grey-900 bg-cool-grey-100 hover:bg-cool-grey-200 focus:outline-cool-grey-500"
             onClick={(e) => addTime(employee.id, datetime)}
           >
             Add
@@ -783,14 +783,14 @@ function generateGraphic({ data, start, end }) {
 function Menu() {
   return (
     <>
-      <div className="invisible h-8 font-RobotoMono" />
-      <div className="fixed top-0 z-10 w-screen h-8 m-auto shadow-xl bg-cool-grey-50">
+      <div className="invisible h-16 font-RobotoMono" />
+      <div className="fixed top-0 z-10 w-screen h-16 m-auto shadow-xl bg-cool-grey-50">
         <div className="relative max-w-[1000px] mx-auto">
           <div className="absolute invisible w-full mx-auto mt-1 text-lg font-semibold text-center sm:visible top-4">
             Timeclock Tool
           </div>
           <Link href="./" className="absolute">
-            <img src="./inverted-logo.png" className="mt-2 ml-4 h-7" />
+            <img src="./inverted-logo.png" className="h-12 mt-2 ml-4" />
           </Link>
         </div>
       </div>

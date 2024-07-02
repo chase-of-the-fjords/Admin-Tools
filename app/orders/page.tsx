@@ -220,8 +220,8 @@ function Menu() {
 
   return (
     <>
-      <div className="invisible h-8 font-RobotoMono" />
-      <div className="fixed top-0 z-10 w-screen h-8 m-auto shadow-xl bg-cool-grey-50">
+      <div className="invisible h-16 font-RobotoMono" />
+      <div className="fixed top-0 z-10 w-screen h-16 m-auto shadow-xl bg-cool-grey-50">
         <div className="relative max-w-[1000px] mx-auto">
           {user.active == 1 ? (
             <div className="absolute invisible w-full mx-auto mt-1 text-lg font-semibold text-center sm:visible top-4">{`${user.name} is currently editing`}</div>
@@ -229,12 +229,12 @@ function Menu() {
             <div className="absolute invisible w-full mx-auto mt-1 text-lg font-semibold text-center sm:visible top-4">{`${totalOpenOrders} open orders`}</div>
           )}
           <Link href="./" className="absolute">
-            <img src="./inverted-logo.png" className="mt-2 ml-4 h-7" />
+            <img src="./inverted-logo.png" className="h-12 mt-2 ml-4" />
           </Link>
           {user.active == 0 ? (
             <Dialog open={openPopup} onOpenChange={setOpenPopup}>
               <DialogTrigger asChild>
-                <span className="absolute mt-1 mr-6 font-semibold transition-colors cursor-pointer right-1 top-4 hover:text-cool-grey-900 text-cool-grey-500">
+                <span className="absolute mt-1 mr-8 font-semibold transition-colors cursor-pointer right-1 top-4 hover:text-cool-grey-900 text-cool-grey-500">
                   Log in
                 </span>
               </DialogTrigger>
@@ -280,7 +280,7 @@ function Menu() {
           ) : (
             <div>
               <DropdownMenu>
-                <DropdownMenuTrigger className="absolute mt-1 mr-6 font-semibold transition-colors cursor-pointer right-1 top-4 hover:text-cool-grey-900 text-cool-grey-500">
+                <DropdownMenuTrigger className="absolute mt-1 mr-8 font-semibold transition-colors cursor-pointer right-1 top-4 hover:text-cool-grey-900 text-cool-grey-500">
                   Menu
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
@@ -314,7 +314,7 @@ function OrderList() {
   const { companies, orders }: any = useContext(DataContext);
 
   return (
-    <div className="flex flex-wrap justify-center px-2 mx-auto mt-6 mb-6 gap-x-6 gap-y-4">
+    <div className="flex flex-wrap justify-center px-2 mx-auto mt-8 mb-8 gap-x-8 gap-y-4">
       {companies.map((company: CompanyType) => {
         return (
           <Company
@@ -390,7 +390,7 @@ function Company({
   return (
     <>
       {orders.length > 0 || user.active ? (
-        <div className="w-13 h-fit font-inter">
+        <div className="w-80 h-fit font-inter">
           {/* Logo & button */}
           <div className="relative mb-4 h-fit">
             <div className="h-[48px]">
@@ -399,7 +399,7 @@ function Company({
                   {company.image != "" ? (
                     <img
                       src={`${company.image}`}
-                      className={`absolute bottom-0 h-[32px] ${
+                      className={`absolute bottom-0 h-8 ${
                         (user.active || company.notes) && "cursor-pointer"
                       } ${user.active || "left-0 right-0 mx-auto"}`}
                       alt={company.name}
@@ -608,7 +608,7 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
     <Dialog open={openPopup} onOpenChange={setOpenPopup}>
       <DialogTrigger asChild>
         <div
-          className={`${priorityStyle} relative bg-cool-grey-50 mb-4 w-13 h-[80px] rounded-md border-l-8 transition-all cursor-pointer ${
+          className={`${priorityStyle} relative bg-cool-grey-50 mb-4 w-80 h-[80px] rounded-md border-l-8 transition-all cursor-pointer ${
             isOldJob
               ? "opacity-75 shadow-inner cursor-not-allowed"
               : "shadow-md hover:shadow-lg hover:-translate-y-1"
@@ -898,7 +898,7 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
     <HoverCard>
       <HoverCardTrigger asChild>
         <div
-          className={`${priorityStyle} relative mb-4 w-13 h-[80px] bg-cool-grey-50 rounded-md border-l-8 shadow-md transition-all cursor-pointer hover:shadow-lg`}
+          className={`${priorityStyle} relative mb-4 w-80 h-[80px] bg-cool-grey-50 rounded-md border-l-8 shadow-md transition-all cursor-pointer hover:shadow-lg`}
         >
           {/* Name and number */}
           <div className="absolute align-top top-3 left-3">
