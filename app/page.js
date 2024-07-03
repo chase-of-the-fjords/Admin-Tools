@@ -20,8 +20,8 @@ function App() {
       {/* HEADER */}
       <Menu />
 
-      <div className="max-w-[280px] sm:max-w-[540px] min-[840px]:max-w-[800px] mx-auto mt-9">
-        <h3 className="mb-3 ml-6 text-2xl font-semibold font-Poppins">
+      <div className="max-w-[280px] sm:max-w-[540px] min-[840px]:max-w-[800px] mx-auto mt-24">
+        <h3 className="mb-3 ml-8 text-2xl font-semibold font-Poppins">
           Machine Shop
         </h3>
 
@@ -54,8 +54,8 @@ function App() {
         </div>
       </div>
 
-      <div className="max-w-[280px] sm:max-w-[540px] min-[840px]:max-w-[800px] mx-auto mt-6 mb-6">
-        <h3 className="mb-3 ml-6 text-2xl font-semibold font-Poppins">
+      <div className="max-w-[280px] sm:max-w-[540px] min-[840px]:max-w-[800px] mx-auto mt-8 mb-8">
+        <h3 className="mb-3 ml-8 text-2xl font-semibold font-Poppins">
           Admin Tools
         </h3>
 
@@ -79,10 +79,10 @@ function App() {
 // The menu bar component.
 function Menu() {
   return (
-    <div className="fixed top-0 z-10 w-screen h-8 m-auto shadow-xl bg-cool-grey-50">
+    <div className="fixed top-0 z-10 w-screen h-16 m-auto shadow-xl bg-cool-grey-50">
       <div className="mx-auto w-fit">
         <Link href="./">
-          <img src="./inverted-logo.png" className="pr-3 mx-auto mt-2 h-7" />
+          <img src="./inverted-logo.png" className="h-12 pr-3 mx-auto mt-2" />
         </Link>
       </div>
     </div>
@@ -93,10 +93,10 @@ function Card({ text, description, link }) {
   return (
     <div className="w-fit font-inter">
       <Link href={link}>
-        <div className="relative w-12 h-10 overflow-hidden transition-all border-t-8 rounded-lg shadow-md cursor-pointer hover:shadow-lg hover:-translate-y-1 bg-cool-grey-50 border-t-cyan-800">
+        <div className="relative h-32 overflow-hidden transition-all border-t-8 rounded-lg shadow-md cursor-pointer w-60 hover:shadow-lg hover:-translate-y-1 bg-cool-grey-50 border-t-cyan-800">
           <svg
               viewBox="0 0 45.973 45.973"
-              className={`absolute w-12 h-12 fill-cool-grey-100 -left-8 -bottom-10 animate-[spin_12s_linear_infinite] transition-colors`}
+              className={`absolute w-60 h-60 fill-cool-grey-100 -left-16 -bottom-32 animate-[spin_12s_linear_infinite] transition-colors`}
             >
             <g>
               <g>

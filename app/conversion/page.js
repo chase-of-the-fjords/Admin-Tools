@@ -145,11 +145,11 @@ export default function App() {
     <>
       <Menu />
 
-      <div className="block w-full px-4 m-auto mt-4 mb-8 sm:w-fit h-fit">
-        <div className="relative flex flex-col-reverse w-full m-auto mt-6 xl:block h-fit">
-          <div className="h-6 mt-2 xl:mx-auto sm:w-fit">
+      <div className="block w-full px-4 m-auto mt-4 mb-16 sm:w-fit h-fit">
+        <div className="relative flex flex-col-reverse w-full m-auto mt-8 xl:block h-fit">
+          <div className="h-8 mt-2 xl:mx-auto sm:w-fit">
             <select
-              className="w-full h-6 font-semibold text-center rounded shadow-md sm:w-12 bg-cool-grey-50"
+              className="w-full h-8 font-semibold text-center rounded shadow-md sm:w-60 bg-cool-grey-50"
               onChange={(e) => setConversion(e.target.value)}
               value={conversion}
             >
@@ -166,12 +166,12 @@ export default function App() {
           <div className="relative block w-full space-y-2 min-[360px]:space-y-0 xl:absolute xl:top-0 h-fit pointer-events-none">
             <input
               type="file"
-              className="w-12 mr-4 transition-colors pointer-events-auto file:w-9 file:cursor-pointer file:border-none file:h-6 file:rounded file:shadow-md file file:bg-cyan-700 file:hover:bg-cyan-800 file:text-cyan-50 file:hover:text-cyan-100"
+              className="mr-4 transition-colors pointer-events-auto w-60 file:w-24 file:cursor-pointer file:border-none file:h-8 file:rounded file:shadow-md file file:bg-cyan-700 file:hover:bg-cyan-800 file:text-cyan-50 file:hover:text-cyan-100"
               accept=".txt,.text,.nc,.min"
               onInput={(e) => getInputData(e)}
             />
             <button
-              className="block h-6 transition-colors pointer-events-auto rounded shadow-md min-[360px]:inline-block min-[360px]:absolute min-[360px]:right-0 w-9 bg-cyan-700 hover:bg-cyan-800 text-cyan-50 hover:text-cyan-100"
+              className="block h-8 transition-colors pointer-events-auto rounded shadow-md min-[360px]:inline-block min-[360px]:absolute min-[360px]:right-0 w-24 bg-cyan-700 hover:bg-cyan-800 text-cyan-50 hover:text-cyan-100"
               onClick={() => {
                 saveFile(new Blob([output], { type: "text/plain" }), fileName);
               }}
@@ -182,12 +182,12 @@ export default function App() {
         </div>
         <div className="flex flex-col items-center justify-center w-full mt-4 space-y-4 xl:space-y-0 xl:space-x-4 xl:flex-row">
           <textarea
-            className="w-full font-mono border-2 rounded shadow-xl resize-none border-cool-grey-400 sm:w-14 h-14"
+            className="w-full font-mono border-2 rounded shadow-xl resize-none border-cool-grey-400 sm:w-[480px] h-[480px]"
             value={input}
             onChange={(e) => setInput(e.target.value)}
           />
           <button
-            className="w-8 h-8 align-middle transition-colors rounded-md shadow-md bg-cyan-700 fill-cyan-50 hover:bg-cyan-800 hover:fill-cyan-100"
+            className="w-16 h-16 align-middle transition-colors rounded-md shadow-md bg-cyan-700 fill-cyan-50 hover:bg-cyan-800 hover:fill-cyan-100"
             onClick={() => {
               setInput(output);
               setOutput("");
@@ -225,7 +225,7 @@ function OutputBox({ conversion, input, output, setOutput }) {
 
   return (
     <textarea
-      className="w-full font-mono border-2 rounded shadow-xl resize-none border-cool-grey-400 sm:w-14 h-14"
+      className="w-full font-mono border-2 rounded shadow-xl resize-none border-cool-grey-400 sm:w-[480px] h-[480px]"
       value={output}
       onChange={(e) => setOutput(e.target.value)}
     ></textarea>
@@ -902,16 +902,16 @@ function removeSequenceNumbers(input) {
 function Menu() {
   return (
     <>
-      <div className="invisible h-8 font-RobotoMono" />
-      <div className="fixed top-0 z-10 w-screen h-8 m-auto shadow-xl bg-cool-grey-50">
+      <div className="invisible h-16 font-RobotoMono" />
+      <div className="fixed top-0 z-10 w-screen h-16 m-auto shadow-xl bg-cool-grey-50">
         <div className="relative max-w-[1000px] mx-auto">
           <div className="absolute invisible w-full mx-auto mt-1 text-lg font-semibold text-center sm:visible top-4">
             Conversion Tool
           </div>
           <Link href="./" className="absolute">
-            <img src="./inverted-logo.png" className="mt-2 ml-4 h-7" />
+            <img src="./inverted-logo.png" className="h-12 mt-2 ml-4" />
           </Link>
-          <span className="absolute mt-1 mr-6 font-semibold transition-colors cursor-pointer right-1 top-4 hover:text-cool-grey-900 text-cool-grey-500">
+          <span className="absolute mt-1 mr-8 font-semibold transition-colors cursor-pointer right-1 top-4 hover:text-cool-grey-900 text-cool-grey-500">
             <Link
               href="//drive.google.com/file/d/1CN_Xb9dpm3dpDMwEbjDmtKG6m7rchUwT/view?usp=drive_link"
               target="_blank"
