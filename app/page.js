@@ -46,6 +46,11 @@ function App() {
             description="View all active orders in the shop and their information."
             link="./orders"
           />
+          <Card
+            text="Order History"
+            description="The history of all activity on the orders page."
+            link="./orders/history"
+          />
         </div>
       </div>
 
