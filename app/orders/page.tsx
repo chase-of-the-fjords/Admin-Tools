@@ -294,6 +294,9 @@ function Menu() {
                   <DropdownMenuItem onClick={() => setCreateCompanyOpen(true)}>
                     Create Company
                   </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link href="./orders/history">View History</Link>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
