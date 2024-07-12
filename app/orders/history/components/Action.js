@@ -54,6 +54,7 @@ function UpdatedOrder({ action }) {
 		<h4>
 			{isUpdated.end ? "Restored " : "Updated "}
 			<span className="font-semibold">{name}</span>
+			{idField.old && <span className="text-base text-cool-grey-600">{` #${idField.old}`}</span>}
 		</h4>
 		{isUpdated.name && <h5 className="ml-2 text-base sm:ml-4">
 			<span className="text-sm text-cool-grey-500">{`NAME `}</span>{`${nameField.old} → ${nameField.new}`}
