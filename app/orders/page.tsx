@@ -101,6 +101,11 @@ const UserContext = createContext<{ user: UserType; setUser: Function }>({
   setUser: () => {},
 });
 
+let escapeSpecialChars = function(str: string) {
+  return str.replaceAll("\n", "\\n")
+             .replaceAll("\r", "\\r");
+};
+
 type CompanyType = {
   id: number;
   name: string;
@@ -589,7 +594,7 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
   }, [openPopup]);
 
   const log = useMemo(() => {
-    if (order.log) return JSON.parse(order.log)
+    if (order.log) return JSON.parse(escapeSpecialChars(order.log))
     else return []
   }, [order])
 

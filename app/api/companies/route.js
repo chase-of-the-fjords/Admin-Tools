@@ -3,6 +3,11 @@ import { query } from "@/lib/db";
 // Always revalidates data when accessed.
 export const revalidate = 0;
 
+String.prototype.escapeSpecialChars = function() {
+  return this.replaceAll("\n", "\\n")
+             .replaceAll("\r", "\\r");
+};
+
 // Creates a new company given a company JSON object.
 export async function POST(request) {
   // Gets the body of the request which contains a 'company' and 'user' object
@@ -88,7 +93,7 @@ export async function PATCH(request) {
     values: changelog,
   }
 
-  const updatedLog = body.originalCompany.log ? [ ...JSON.parse(body.originalCompany.log), logEntry ] : [ logEntry ];
+  const updatedLog = body.originalCompany.log ? [ ...JSON.parse(body.originalCompany.log.escapeSpecialChars()), logEntry ] : [ logEntry ];
 
   // The request:
   const company = await query({
@@ -152,7 +157,7 @@ export async function DELETE(request) {
     values: changelog,
   }
 
-  const updatedLog = body.company.log ? [ ...JSON.parse(body.company.log), logEntry ] : [ logEntry ];
+  const updatedLog = body.company.log ? [ ...JSON.parse(body.company.log.escapeSpecialChars()), logEntry ] : [ logEntry ];
 
   // The request:
   const company = await query({
