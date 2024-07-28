@@ -1,6 +1,11 @@
 // Helper library for processing time.
 import moment from "moment/moment";
 
+let escapeSpecialChars = function(str) {
+  return str.replaceAll("\n", "\\n")
+             .replaceAll("\r", "\\r");
+};
+
 /**
  * Gets orders from the SQL database for a given interval.
  *
@@ -97,7 +102,7 @@ export async function getLog(start, end, filter = "") {
 	let orderLogs = [];
 
 	orders.forEach((order) => {
-		let orderLog = order.log ? JSON.parse(order.log) : [];
+		let orderLog = order.log ? JSON.parse(escapeSpecialChars(order.log)) : [];
 		orderLog.forEach((ol) => {
 			orderLogs.push(ol);
 		})
