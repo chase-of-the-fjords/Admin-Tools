@@ -56,6 +56,11 @@ const tools = [
     tool_id: "keep",
     func: keepValue,
   },
+  {
+    name: "Reverse Lines",
+    tool_id: "reverse",
+    func: reverseLines,
+  }
 ];
 
 /**
@@ -877,6 +882,20 @@ function addDecimals(input) {
   }
 
   return output.trim();
+}
+
+function reverseLines(input) {
+  let output = "";
+
+  let lines = input.split("\n");
+
+  for (let l = lines.length - 1; l >= 0; l--) {
+    let line = lines[l];
+
+    output += line + '\n';
+  }
+
+  return output;
 }
 
 // Rules:
