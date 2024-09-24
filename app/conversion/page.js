@@ -47,14 +47,14 @@ const tools = [
     func: removeSequenceNumbers,
   },
   {
-    name: "Add Decimals",
-    tool_id: "add-decimals",
-    func: addDecimals,
-  },
-  {
     name: "Do Nothing",
     tool_id: "keep",
     func: keepValue,
+  },
+  {
+    name: "Add Decimals",
+    tool_id: "add-decimals",
+    func: addDecimals,
   },
 ];
 
