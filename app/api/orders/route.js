@@ -3,6 +3,11 @@ import { query } from "@/lib/db";
 // Always revalidates data when accessed.
 export const revalidate = 0;
 
+String.prototype.escapeSpecialChars = function() {
+  return this.replaceAll("\n", "\\n")
+             .replaceAll("\r", "\\r");
+};
+
 // Creates a new machine given a machine JSON object.
 export async function POST(request) {
   // Gets the body of the request which contains a 'machine' object
@@ -97,7 +102,7 @@ export async function PATCH(request) {
     values: changelog,
   }
 
-  const updatedLog = body.originalOrder.log ? [ ...JSON.parse(body.originalOrder.log), logEntry ] : [ logEntry ];
+  const updatedLog = body.originalOrder.log ? [ ...JSON.parse(body.originalOrder.log.escapeSpecialChars()), logEntry ] : [ logEntry ];
 
   // The request:
   const order = await query({
@@ -168,7 +173,7 @@ export async function DELETE(request) {
     values: values,
   }
 
-  const updatedLog = body.order.log ? [ ...JSON.parse(body.order.log), logEntry ] : [ logEntry ];
+  const updatedLog = body.order.log ? [ ...JSON.parse(body.order.log.escapeSpecialChars()), logEntry ] : [ logEntry ];
 
   // The request:
   const order = await query({

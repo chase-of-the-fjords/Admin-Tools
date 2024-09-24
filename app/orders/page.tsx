@@ -101,6 +101,11 @@ const UserContext = createContext<{ user: UserType; setUser: Function }>({
   setUser: () => {},
 });
 
+let escapeSpecialChars = function(str: string) {
+  return str.replaceAll("\n", "\\n")
+             .replaceAll("\r", "\\r");
+};
+
 type CompanyType = {
   id: number;
   name: string;
@@ -210,10 +215,18 @@ function Menu() {
     }
   };
 
-  const totalOpenOrders = useMemo(() => {
+  const totalOpenPutters = useMemo(() => {
     let total = 0;
     orders.forEach((order) => {
-      total += order.quantity - order.completed;
+      if (order.category == 0 && order.end == null) total += order.quantity - order.completed;
+    });
+    return total;
+  }, [orders]);
+
+  const totalOpenAccessories = useMemo(() => {
+    let total = 0;
+    orders.forEach((order) => {
+      if (order.category == 1 && order.end == null) total += order.quantity - order.completed;
     });
     return total;
   }, [orders]);
@@ -226,7 +239,7 @@ function Menu() {
           {user.active == 1 ? (
             <div className="absolute invisible w-full mx-auto mt-1 text-lg font-semibold text-center sm:visible top-4">{`${user.name} is currently editing`}</div>
           ) : (
-            <div className="absolute invisible w-full mx-auto mt-1 text-lg font-semibold text-center sm:visible top-4">{`${totalOpenOrders} open orders`}</div>
+            <div className="absolute invisible w-full mx-auto mt-1 text-lg font-semibold text-center sm:visible top-4">{`${totalOpenPutters} putters, ${totalOpenAccessories} accessories`}</div>
           )}
           <Link href="./" className="absolute">
             <img src="./inverted-logo.png" className="h-12 mt-2 ml-4" />
@@ -589,7 +602,7 @@ function Order({ company, order }: { company: CompanyType; order: OrderType }) {
   }, [openPopup]);
 
   const log = useMemo(() => {
-    if (order.log) return JSON.parse(order.log)
+    if (order.log) return JSON.parse(escapeSpecialChars(order.log))
     else return []
   }, [order])
 
