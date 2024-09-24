@@ -56,6 +56,11 @@ const tools = [
     tool_id: "keep",
     func: keepValue,
   },
+  {
+    name: "Reverse Lines",
+    tool_id: "reverse",
+    func: reverseLines,
+  }
 ];
 
 /**
@@ -879,6 +884,20 @@ function addDecimals(input) {
   return output.trim();
 }
 
+function reverseLines(input) {
+  let output = "";
+
+  let lines = input.split("\n");
+
+  for (let l = lines.length - 1; l >= 0; l--) {
+    let line = lines[l];
+
+    output += line + '\n';
+  }
+
+  return output;
+}
+
 // Rules:
 // - Cut the first 6 characters of every line.
 // - If a line has less than 6 characters, set it blank.
@@ -913,7 +932,7 @@ function Menu() {
           </Link>
           <span className="absolute mt-1 mr-8 font-semibold transition-colors cursor-pointer right-1 top-4 hover:text-cool-grey-900 text-cool-grey-500">
             <Link
-              href="//drive.google.com/file/d/1CN_Xb9dpm3dpDMwEbjDmtKG6m7rchUwT/view?usp=drive_link"
+              href="https://drive.google.com/file/d/1vix1z0eCnynKab5ZydOqLWENtWK_GZS4/view?usp=sharing"
               target="_blank"
             >
               Download
