@@ -913,7 +913,7 @@ function Menu() {
           </Link>
           <span className="absolute mt-1 mr-8 font-semibold transition-colors cursor-pointer right-1 top-4 hover:text-cool-grey-900 text-cool-grey-500">
             <Link
-              href="//drive.google.com/file/d/1CN_Xb9dpm3dpDMwEbjDmtKG6m7rchUwT/view?usp=drive_link"
+              href="https://drive.google.com/file/d/1vix1z0eCnynKab5ZydOqLWENtWK_GZS4/view?usp=sharing"
               target="_blank"
             >
               Download
