@@ -402,6 +402,22 @@ function Overview({ employees, data, start, end }) {
               </li>
             );
           })}
+          <li key={-1} className="pb-2 pl-2 leading-5 list-none">
+            <div className="text-lg font-semibold text-cool-grey-900">
+              Total
+            </div>
+            <div className="pl-2 text-cool-grey-800">
+              { 
+                minutesToString(
+                  employees.reduce((prev, employee) => prev + findMinutes({
+                    data: data.filter((entry) => {
+                      return entry.id == employee.id && !entry.deleted;
+                    }),
+                  }), 0)
+                )
+              }
+            </div>
+          </li>
         </div>
       </div>
     </>
@@ -653,6 +669,41 @@ function findHours({ data }) {
 
   let hours = Math.floor(total_hours);
   let minutes = Math.floor(60 * (total_hours % 1));
+
+  let output = `${hours} ${hours != 1 ? "hours" : "hour"}, ${minutes} ${
+    minutes != 1 ? "minutes" : "minute"
+  }`;
+
+  return output;
+}
+
+function findMinutes({ data }) {
+  let total_hours = 0;
+
+  for (let i = 0; i < data.length - 1; i += 2) {
+    let first = data[i];
+    let second = data[i + 1];
+
+    let start_time = moment(first.date + " " + first.time);
+    let end_time = moment(second.date + " " + second.time);
+
+    let length = (end_time - start_time) / (1000 * 60 * 60);
+
+    if (second.hasBreak) length -= 0.5;
+
+    if (length < 0) length = 0;
+
+    total_hours += length;
+  }
+
+  let minutes = Math.floor(60 * total_hours);
+
+  return minutes;
+}
+
+function minutesToString(totalMinutes) {
+  let hours = Math.floor(totalMinutes / 60);
+  let minutes = totalMinutes % 60;
 
   let output = `${hours} ${hours != 1 ? "hours" : "hour"}, ${minutes} ${
     minutes != 1 ? "minutes" : "minute"
