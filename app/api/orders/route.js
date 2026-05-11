@@ -8,6 +8,11 @@ String.prototype.escapeSpecialChars = function() {
              .replaceAll("\r", "\\r");
 };
 
+String.prototype.escapeQuotes = function() {
+  return this.replaceAll("\"", "\\\"")
+             .replaceAll("'", "''");
+}
+
 // Creates a new machine given a machine JSON object.
 export async function POST(request) {
   // Gets the body of the request which contains a 'machine' object
@@ -31,14 +36,14 @@ export async function POST(request) {
     user: users[0].id,
     timestamp: (new Date()).toLocaleString('lt-LT', {timeZone: "America/Los_Angeles"}),
     values: {
-      name: body.order.name,
+      name: body.order.name.escapeQuotes(),
       company: body.order.company,
       category: body.order.category,
       quantity: body.order.quantity,
       completed: body.order.completed,
       priority: body.order.priority,
-      notes: body.order.notes,
-      id: body.order.id
+      notes: body.order.notes.escapeQuotes(),
+      id: body.order.id.escapeQuotes()
     }
   }
 
@@ -88,6 +93,13 @@ export async function PATCH(request) {
     if (change == "name" || change == "company" || change == "category" || change == "id") return true;
     return body.order[change] !== body.originalOrder[change]
   }).map((change) => {
+    if (change == "name" || change == "notes" || change == "id") {
+      return {
+        field: change,
+        old: body.originalOrder[change] !== undefined ? body.originalOrder[change].escapeQuotes() : undefined,
+        new: body.order[change] !== undefined ? body.order[change].escapeQuotes() : undefined,
+      }
+    }
     return {
       field: change,
       old: body.originalOrder[change],
@@ -102,7 +114,41 @@ export async function PATCH(request) {
     values: changelog,
   }
 
-  const updatedLog = body.originalOrder.log ? [ ...JSON.parse(body.originalOrder.log.escapeSpecialChars()), logEntry ] : [ logEntry ];
+  const originalLog = JSON.parse(body.originalOrder.log.escapeSpecialChars());
+
+  const escapedOriginalLog = originalLog.map((entry) => {
+
+    if (Array.isArray(entry.values)) {
+      return {
+        ...entry,
+        values: entry.values.map((value) => {
+          if (value.field == "name" || value.field == "notes" || value.field == "id") {
+            return {
+              ...value,
+              old: value.old !== undefined ? value.old.escapeQuotes() : undefined,
+              new: value.new !== undefined ? value.new.escapeQuotes() : undefined,
+              value: value.value !== undefined ? value.value.escapeQuotes() : undefined,
+            }
+          }
+          return value;
+        })
+      }
+    }
+
+    return {
+      ...entry,
+      values: Object.fromEntries(
+        Object.entries(entry.values).map(([key, value]) => {
+          if (key == "name" || key == "notes" || key == "id") {
+            return [key, value.escapeQuotes()]
+          }
+          return [key, value];
+        })
+      )
+    }
+  });
+
+  const updatedLog = body.originalOrder.log ? [ ...escapedOriginalLog, logEntry ] : [ logEntry ];
 
   // The request:
   const order = await query({
@@ -160,6 +206,12 @@ export async function DELETE(request) {
   // Adds an entry to the log:
 
   const values = ["name", "company", "category", "notes", "id"].map((change) => {
+    if (change == "name" || change == "notes" || change == "id") {
+      return {
+        field: change,
+        value: body.order[change] !== undefined && body.order[change].escapeQuotes(),
+      }
+    }
     return {
       field: change,
       value: body.order[change],
@@ -173,7 +225,41 @@ export async function DELETE(request) {
     values: values,
   }
 
-  const updatedLog = body.order.log ? [ ...JSON.parse(body.order.log.escapeSpecialChars()), logEntry ] : [ logEntry ];
+  const originalLog = JSON.parse(body.order.log.escapeSpecialChars());
+
+  const escapedOriginalLog = originalLog.map((entry) => {
+
+    if (Array.isArray(entry.values)) {
+      return {
+        ...entry,
+        values: entry.values.map((value) => {
+          if (value.field == "name" || value.field == "notes" || value.field == "id") {
+            return {
+              ...value,
+              old: value.old !== undefined ? value.old.escapeQuotes() : undefined,
+              new: value.new !== undefined ? value.new.escapeQuotes() : undefined,
+              value: value.value !== undefined ? value.value.escapeQuotes() : undefined,
+            }
+          }
+          return value;
+        })
+      }
+    }
+
+    return {
+      ...entry,
+      values: Object.fromEntries(
+        Object.entries(entry.values).map(([key, value]) => {
+          if (key == "name" || key == "notes" || key == "id") {
+            return [key, value.escapeQuotes()]
+          }
+          return [key, value];
+        })
+      )
+    }
+  });
+
+  const updatedLog = body.order.log ? [ ...escapedOriginalLog, logEntry ] : [ logEntry ];
 
   // The request:
   const order = await query({
