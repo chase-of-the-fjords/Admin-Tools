@@ -7,7 +7,7 @@ export const revalidate = 0;
 export async function GET (request, { params }) {
     
     // Format: 'YYYY-MM-DD:YYYY-MM-DD'
-    const interval = await params.interval;
+    const interval = (await params).interval;
     const start_date = interval.substring(0, 10);
     const end_date = interval.substring(11, 21);
 

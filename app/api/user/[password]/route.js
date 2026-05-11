@@ -2,7 +2,7 @@ import { query } from "@/lib/db";
 
 // Creates a new machine given a machine JSON object.
 export async function GET(request, { params }) {
-  let password = params.password;
+  let password = (await params).password;
 
   // The request:
   const users = await query({
